@@ -1,4 +1,40 @@
 [[package]]
+name = "bcm2837"
+version = "0.1.0"
+dependencies = [
+ "register 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "cortex-a"
+version = "2.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "register 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "mailbox"
 version = "0.1.0"
+dependencies = [
+ "bcm2837 0.1.0",
+ "cortex-a 2.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
+[[package]]
+name = "register"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "tock-registers 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "tock-registers"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[metadata]
+"checksum cortex-a 2.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "2b187d0d728b4a99ba1d79f9671b976bcdd71a8a2c719585218fd2dc14a4d08c"
+"checksum register 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "e10f31b6d2299e5620986ad9fcdd66463e125ad72af4f403f9aedf7592d5ccdb"
+"checksum tock-registers 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "3a385d94f3f62e60445a0adb9ff8d9621faa272234530d4c0f848ec98f88e316"
