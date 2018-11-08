@@ -3,4 +3,6 @@
 members = [
     "bcm2837",
     "mailbox",
+    "raspi3_boot",
+    "fb-test-project",
 ]

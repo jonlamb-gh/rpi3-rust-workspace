@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -e
+
+BUILD_TYPE="debug"
+
+echo "Build type: $BUILD_TYPE"
+
+cargo xbuild --target=aarch64-unknown-none
+
+cargo objcopy -- --strip-all -O binary \
+    ../target/aarch64-unknown-none/debug/fb-test-project \
+    ../target/aarch64-unknown-none/debug/kernel8.img
+
+exit 0

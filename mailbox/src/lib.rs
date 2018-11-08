@@ -3,16 +3,22 @@
 extern crate bcm2837;
 extern crate cortex_a;
 
-use core::sync::atomic::{compiler_fence, Ordering};
 use bcm2837::mbox::MBOX;
 use bcm2837::mbox::STATUS;
+use core::sync::atomic::{compiler_fence, Ordering};
 use cortex_a::asm;
 
+// TODO - cleanup organization of modules
 pub mod msg;
 
 pub trait MailboxBufferConstructor {
     fn construct_buffer(&self, buffer: &mut [u32; MAILBOX_BUFFER_LEN]);
 }
+
+// Cmd/Resp constructors?
+// or single trait with construct_cmd/_resp()?
+// maybe impl From for Resp structs?
+// Currently each will impl From<&[u32; MAILBOX_BUFFER_LEN]> for T
 
 // Custom errors
 pub enum MboxError {
@@ -27,15 +33,16 @@ pub mod channel {
 }
 
 // Tags
+// TODO - move into a mod/enum, use by the cmd/resp
 pub mod tag {
-    pub const GETSERIAL: u32 = 0x10004;
-    pub const SETCLKRATE: u32 = 0x38002;
+    //pub const GETSERIAL: u32 = 0x10004;
+    //pub const SETCLKRATE: u32 = 0x38002;
     pub const LAST: u32 = 0;
 }
 
 // Clocks
 pub mod clock {
-    pub const UART: u32 = 0x0_0000_0002;
+    pub const UART: u32 = 0x0000_0002;
 }
 
 // Responses
@@ -66,7 +73,7 @@ impl Mailbox {
         &mut self,
         channel: u32,
         constructor: T,
-    ) -> Result<()> {
+    ) -> Result<msg::Resp> {
         constructor.construct_buffer(&mut self.buffer);
 
         // Insert a compiler fence that ensures that all stores to the
@@ -105,7 +112,7 @@ impl Mailbox {
             if ((resp & 0xF) == channel) && ((resp & !0xF) == buf_ptr) {
                 // is it a valid successful response?
                 return match self.buffer[1] {
-                    response::SUCCESS => Ok(()),
+                    response::SUCCESS => Ok(msg::Resp::from(&self.buffer)),
                     response::ERROR => Err(MboxError::ResponseError),
                     _ => Err(MboxError::UnknownError),
                 };
