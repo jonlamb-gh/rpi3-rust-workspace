@@ -7,3 +7,4 @@ Rust workspace for RPI3 bare metal things
 - https://github.com/rust-embedded/rust-raspi3-tutorial
 - https://github.com/bztsrc/raspi3-tutorial
 - https://github.com/raspberrypi/firmware/wiki/Mailbox-framebuffer-interface
+- https://github.com/raspberrypi/firmware/wiki/Mailbox-property-interface#set-clock-rate

@@ -3,7 +3,15 @@
 extern crate bcm2837;
 extern crate cortex_a;
 
+pub mod msg;
+
 use bcm2837::mbox::MBOX;
+use bcm2837::mbox::STATUS;
+use cortex_a::asm;
+
+pub trait MailboxBufferConstructor {
+    fn construct_buffer(&self, buffer: &mut [u32; MAILBOX_BUFFER_LEN]);
+}
 
 // Custom errors
 pub enum MboxError {
@@ -52,7 +60,50 @@ impl Mailbox {
         }
     }
 
-    pub fn buffer(&mut self) -> &mut [u32; MAILBOX_BUFFER_LEN] {
-        &mut self.buffer
+    /// Make a mailbox call. Returns Err(MboxError) on failure, Ok(()) success
+    pub fn call<T: MailboxBufferConstructor>(
+        &mut self,
+        channel: u32,
+        constructor: T,
+    ) -> Result<()> {
+        constructor.construct_buffer(&mut self.buffer);
+
+        // wait until we can write to the mailbox
+        loop {
+            if !self.mbox.STATUS.is_set(STATUS::FULL) {
+                break;
+            }
+
+            asm::nop();
+        }
+
+        let buf_ptr = self.buffer.as_ptr() as u32;
+
+        // write the address of our message to the mailbox with channel identifier
+        self.mbox.WRITE.set((buf_ptr & !0xF) | (channel & 0xF));
+
+        // now wait for the response
+        loop {
+            // is there a response?
+            loop {
+                if !self.mbox.STATUS.is_set(STATUS::EMPTY) {
+                    break;
+                }
+
+                asm::nop();
+            }
+
+            let resp: u32 = self.mbox.READ.get();
+
+            // is it a response to our message?
+            if ((resp & 0xF) == channel) && ((resp & !0xF) == buf_ptr) {
+                // is it a valid successful response?
+                return match self.buffer[1] {
+                    response::SUCCESS => Ok(()),
+                    response::ERROR => Err(MboxError::ResponseError),
+                    _ => Err(MboxError::UnknownError),
+                };
+            }
+        }
     }
 }
