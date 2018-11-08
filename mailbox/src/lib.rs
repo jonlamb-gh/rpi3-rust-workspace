@@ -72,7 +72,7 @@ impl Mailbox {
     pub fn call<T: MailboxBufferConstructor>(
         &mut self,
         channel: u32,
-        constructor: T,
+        constructor: &T,
     ) -> Result<msg::Resp> {
         constructor.construct_buffer(&mut self.buffer);
 

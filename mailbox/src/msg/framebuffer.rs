@@ -27,10 +27,10 @@ pub struct FramebufferCmd {
 
 pub struct FramebufferResp {
     // TODO - what else is useful?
-    phy_width: u32,
-    phy_height: u32,
+    pub phy_width: u32,
+    pub phy_height: u32,
 
-    pitch: u32,
+    pub pitch: u32,
     // pixels_ptr: volatile *const u32 ?
 }
 

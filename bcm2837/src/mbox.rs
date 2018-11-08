@@ -35,6 +35,12 @@ impl MBOX {
     pub fn ptr() -> *const RegisterBlock {
         VIDEOCORE_MBOX as *const _
     }
+
+    pub fn new() -> Self {
+        Self {
+            _marker: PhantomData,
+        }
+    }
 }
 
 impl Deref for MBOX {
