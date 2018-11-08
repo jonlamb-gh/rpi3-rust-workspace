@@ -3,11 +3,12 @@
 extern crate bcm2837;
 extern crate cortex_a;
 
-pub mod msg;
-
+use core::sync::atomic::{compiler_fence, Ordering};
 use bcm2837::mbox::MBOX;
 use bcm2837::mbox::STATUS;
 use cortex_a::asm;
+
+pub mod msg;
 
 pub trait MailboxBufferConstructor {
     fn construct_buffer(&self, buffer: &mut [u32; MAILBOX_BUFFER_LEN]);
@@ -67,6 +68,11 @@ impl Mailbox {
         constructor: T,
     ) -> Result<()> {
         constructor.construct_buffer(&mut self.buffer);
+
+        // Insert a compiler fence that ensures that all stores to the
+        // mbox buffer are finished before the GPU is signaled (which
+        // is done by a store operation as well).
+        compiler_fence(Ordering::Release);
 
         // wait until we can write to the mailbox
         loop {
