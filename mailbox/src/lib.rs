@@ -21,6 +21,7 @@ pub trait MailboxBufferConstructor {
 // Currently each will impl From<&[u32; MAILBOX_BUFFER_LEN]> for T
 
 // Custom errors
+#[derive(Debug)]
 pub enum MboxError {
     ResponseError,
     UnknownError,

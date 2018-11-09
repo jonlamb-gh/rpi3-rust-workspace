@@ -14,17 +14,19 @@ pub const SET_DEPTH_TAG: u32 = 0x48005;
 pub const SET_PIXEL_ORDER_TAG: u32 = 0x48006;
 pub const SET_VIRT_OFFSET_TAG: u32 = 0x48009;
 
+#[derive(Debug)]
 pub struct FramebufferCmd {
-    phy_width: u32,
-    phy_height: u32,
+    pub phy_width: u32,
+    pub phy_height: u32,
 
-    virt_width: u32,
-    virt_height: u32,
+    pub virt_width: u32,
+    pub virt_height: u32,
 
-    x_offset: u32,
-    y_offset: u32,
+    pub x_offset: u32,
+    pub y_offset: u32,
 }
 
+#[derive(Debug)]
 pub struct FramebufferResp {
     // TODO - what else is useful?
     pub phy_width: u32,
@@ -93,7 +95,7 @@ impl From<&[u32; MAILBOX_BUFFER_LEN]> for FramebufferResp {
         // depth
         assert_eq!(buffer[20], 32);
         // buffer
-        assert_eq!(buffer[28], 0);
+        assert_ne!(buffer[28], 0);
 
         FramebufferResp {
             phy_width: buffer[5],

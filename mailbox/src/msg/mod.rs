@@ -6,6 +6,7 @@ pub mod set_clock_rate;
 use self::framebuffer::FramebufferResp;
 use self::set_clock_rate::SetClockRateResp;
 
+#[derive(Debug)]
 pub enum Resp {
     Ack,
     SetClockRateResp(SetClockRateResp),
