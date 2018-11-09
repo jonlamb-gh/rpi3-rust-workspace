@@ -11,6 +11,14 @@ impl Display {
     pub fn new(fb_data: FramebufferResp) -> Self {
         Self { fb_data }
     }
+
+    pub fn width(&self) -> u32 {
+        self.fb_data.phy_width
+    }
+
+    pub fn height(&self) -> u32 {
+        self.fb_data.phy_height
+    }
 }
 
 impl Drawing<PixelColorU32> for Display {
@@ -23,8 +31,8 @@ impl Drawing<PixelColorU32> for Display {
                 continue;
             }
 
-            //self.fb_data.set_pixel(coord[0], coord[1], color.into_inner() );
-            self.fb_data.set_pixel(coord[0], coord[1], 0xFF_FF_FF);
+            self.fb_data
+                .set_pixel(coord[0], coord[1], color.into_inner());
         }
     }
 }

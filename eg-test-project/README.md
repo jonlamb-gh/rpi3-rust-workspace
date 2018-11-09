@@ -1,4 +1,6 @@
-# fb-test-project
+# eg-test-project
+
+https://github.com/jamwaffles/embedded-graphics
 
 ## Dependencies
 

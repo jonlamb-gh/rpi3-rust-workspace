@@ -14,9 +14,9 @@ mod display;
 mod serial;
 
 use embedded_graphics::coord::Coord;
-use embedded_graphics::fonts::Font6x8;
+use embedded_graphics::fonts::Font12x16;
 use embedded_graphics::prelude::*;
-use embedded_graphics::primitives::{Circle, Line};
+use embedded_graphics::primitives::{Circle, Line, Rect};
 
 use bcm2837::mbox::MBOX;
 use bcm2837::uart0::UART0;
@@ -41,7 +41,7 @@ fn kernel_entry() -> ! {
         }
     }
 
-    writeln!(serial, "Hello World");
+    writeln!(serial, "Hello World").ok();
 
     let cmd = FramebufferCmd {
         phy_width: 240,
@@ -54,11 +54,11 @@ fn kernel_entry() -> ! {
         y_offset: 0,
     };
 
-    writeln!(serial, "cmd = {:#?}", cmd);
+    writeln!(serial, "cmd = {:#?}", cmd).ok();
 
     let resp = mbox.call(channel::PROP, &cmd);
 
-    writeln!(serial, "resp = {:#?}", resp);
+    writeln!(serial, "resp = {:#?}", resp).ok();
 
     if let Ok(resp) = resp {
         if let Resp::FramebufferResp(mut fb_resp) = resp {
@@ -72,29 +72,38 @@ fn kernel_entry() -> ! {
 }
 
 fn render_display(display: &mut Display) {
-    // Outline
+    let w: i32 = display.width() as _;
+    let h: i32 = display.height() as _;
+    display.draw(
+        Rect::new(Coord::new(0, 0), Coord::new(w - 1, h - 1))
+            .with_stroke(Some(0x00_00_FF_u32.into()))
+            .into_iter(),
+    );
+
     display.draw(
         Circle::new(Coord::new(64, 64), 64)
-            .with_stroke(Some(1u8.into()))
+            .with_stroke(Some(0x00_FF_00_u32.into()))
             .into_iter(),
     );
 
-    // Clock hands
     display.draw(
         Line::new(Coord::new(64, 64), Coord::new(0, 64))
-            .with_stroke(Some(1u8.into()))
-            .into_iter(),
-    );
-    display.draw(
-        Line::new(Coord::new(64, 64), Coord::new(80, 80))
-            .with_stroke(Some(1u8.into()))
+            .with_stroke(Some(0xFF_00_00_u32.into()))
+            .with_stroke_width(1)
             .into_iter(),
     );
 
     display.draw(
-        Font6x8::render_str("Hello World!")
-            .with_stroke(Some(1u8.into()))
-            .translate(Coord::new(5, 50))
+        Line::new(Coord::new(64, 64), Coord::new(80, 80))
+            .with_stroke(Some(0xFF_FF_FF_u32.into()))
+            .with_stroke_width(1)
+            .into_iter(),
+    );
+
+    display.draw(
+        Font12x16::render_str("Hello World!")
+            .with_stroke(Some(0xFF_FF_FF_u32.into()))
+            .translate(Coord::new(5, 45))
             .into_iter(),
     );
 }

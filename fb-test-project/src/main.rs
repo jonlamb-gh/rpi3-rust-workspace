@@ -15,7 +15,6 @@ use bcm2837::mbox::MBOX;
 use bcm2837::uart0::UART0;
 use core::fmt::Write;
 use mailbox::msg::framebuffer::FramebufferCmd;
-use mailbox::msg::framebuffer::FramebufferResp;
 use mailbox::msg::Resp;
 use mailbox::{channel, Mailbox};
 use serial::Serial;
@@ -34,7 +33,7 @@ fn kernel_entry() -> ! {
         }
     }
 
-    writeln!(serial, "Hello World");
+    writeln!(serial, "Hello World").ok();
 
     let cmd = FramebufferCmd {
         phy_width: 240,
@@ -47,11 +46,11 @@ fn kernel_entry() -> ! {
         y_offset: 0,
     };
 
-    writeln!(serial, "cmd = {:#?}", cmd);
+    writeln!(serial, "cmd = {:#?}", cmd).ok();
 
     let resp = mbox.call(channel::PROP, &cmd);
 
-    writeln!(serial, "resp = {:#?}", resp);
+    writeln!(serial, "resp = {:#?}", resp).ok();
 
     if let Ok(resp) = resp {
         if let Resp::FramebufferResp(mut fb_resp) = resp {
