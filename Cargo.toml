@@ -1,9 +1,10 @@
 [workspace]
 
 members = [
+    "raspi3_boot",
     "bcm2837",
     "mailbox",
-    "raspi3_boot",
+    "display",
     "fb-test-project",
     "eg-test-project",
 ]

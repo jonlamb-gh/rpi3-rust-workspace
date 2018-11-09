@@ -7,11 +7,11 @@ extern crate cortex_a;
 extern crate embedded_graphics;
 extern crate mailbox;
 extern crate rgb;
+extern crate display;
 
 #[macro_use]
 extern crate raspi3_boot;
 
-mod display;
 mod serial;
 
 use embedded_graphics::coord::Coord;
