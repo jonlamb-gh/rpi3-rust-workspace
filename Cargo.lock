@@ -22,6 +22,7 @@ dependencies = [
  "embedded-graphics 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "mailbox 0.1.0",
  "raspi3_boot 0.1.0",
+ "rgb 0.8.11 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -74,6 +75,11 @@ dependencies = [
 ]
 
 [[package]]
+name = "rgb"
+version = "0.8.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
 name = "tock-registers"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -84,4 +90,5 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum panic-abort 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = "2c14a66511ed17b6a8b4256b868d7fd207836d891db15eea5195dbcaf87e630f"
 "checksum r0 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "e2a38df5b15c8d5c7e8654189744d8e396bddc18ad48041a500ce52d6948941f"
 "checksum register 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "e10f31b6d2299e5620986ad9fcdd66463e125ad72af4f403f9aedf7592d5ccdb"
+"checksum rgb 0.8.11 (registry+https://github.com/rust-lang/crates.io-index)" = "002bebda58b24482d6911a59512e8a17fa1defecf5a2162521113b7cc5422dd1"
 "checksum tock-registers 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "3a385d94f3f62e60445a0adb9ff8d9621faa272234530d4c0f848ec98f88e316"

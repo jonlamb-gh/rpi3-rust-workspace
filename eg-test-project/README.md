@@ -1,6 +1,9 @@
 # eg-test-project
 
-https://github.com/jamwaffles/embedded-graphics
+## Links
+
+- https://github.com/jamwaffles/embedded-graphics
+- https://github.com/kornelski/rust-rgb
 
 ## Dependencies
 

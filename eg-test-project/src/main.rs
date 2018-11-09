@@ -6,6 +6,7 @@ extern crate bcm2837;
 extern crate cortex_a;
 extern crate embedded_graphics;
 extern crate mailbox;
+extern crate rgb;
 
 #[macro_use]
 extern crate raspi3_boot;
@@ -74,9 +75,14 @@ fn kernel_entry() -> ! {
 fn render_display(display: &mut Display) {
     let w: i32 = display.width() as _;
     let h: i32 = display.height() as _;
+
+    // red rectangle
     display.draw(
         Rect::new(Coord::new(0, 0), Coord::new(w - 1, h - 1))
-            .with_stroke(Some(0x00_00_FF_u32.into()))
+            // u32 RGB
+            //.with_stroke(Some(0x00_00_FF_u32.into()))
+            // (u8, u8, u8) RGB
+            .with_stroke(Some((0xFF, 0x00, 0x00).into()))
             .into_iter(),
     );
 
