@@ -23,7 +23,7 @@ pub struct BlankScreenResp {
 impl MailboxBufferConstructor for BlankScreenCmd {
     fn construct_buffer(&self, buffer: &mut [u32; MAILBOX_BUFFER_LEN]) {
         // set up clock for consistent divisor values
-        buffer[0] = 9 * 4;
+        buffer[0] = 7 * 4;
         buffer[1] = REQUEST;
         buffer[2] = TAG;
         buffer[3] = CMD_LEN;
