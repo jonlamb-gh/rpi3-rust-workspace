@@ -5,4 +5,5 @@ members = [
     "mailbox",
     "raspi3_boot",
     "fb-test-project",
+    "eg-test-project",
 ]

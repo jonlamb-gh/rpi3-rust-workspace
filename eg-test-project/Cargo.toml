@@ -1,0 +1,12 @@
+[package]
+name = "eb-test-project"
+version = "0.1.0"
+authors = ["Jon Lamb"]
+edition = "2015"
+
+[dependencies]
+raspi3_boot = { path = "../raspi3_boot" }
+cortex-a = "2.2"
+bcm2837 = { path = "../bcm2837" }
+mailbox = { path = "../mailbox" }
+embedded-graphics = "0.4.4"
