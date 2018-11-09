@@ -37,11 +37,11 @@ fn kernel_entry() -> ! {
     writeln!(serial, "Hello World");
 
     let cmd = FramebufferCmd {
-        phy_width: 680,
-        phy_height: 480,
+        phy_width: 240,
+        phy_height: 240,
 
-        virt_width: 680,
-        virt_height: 480,
+        virt_width: 240,
+        virt_height: 240,
 
         x_offset: 0,
         y_offset: 0,

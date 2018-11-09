@@ -113,6 +113,5 @@ impl FramebufferResp {
     pub fn set_pixel(&mut self, x: u32, y: u32, value: u32) {
         let offset = (y * (self.pitch / 4)) + x;
         unsafe { ptr::write(self.pixels_ptr.offset(offset as _), value) };
-        //unsafe { ptr::write_volatile(self.pixels_ptr.offset(offset as _), value) };
     }
 }
