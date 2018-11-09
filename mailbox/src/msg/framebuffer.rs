@@ -1,6 +1,8 @@
 //! Framebuffer commands and responses
 //! TODO - break this up, iterate over cmd/resp messages, combine for single op
 
+use core::ptr;
+
 use super::super::tag;
 use super::super::MailboxBufferConstructor;
 use super::super::MAILBOX_BUFFER_LEN;
@@ -33,7 +35,7 @@ pub struct FramebufferResp {
     pub phy_height: u32,
 
     pub pitch: u32,
-    // pixels_ptr: volatile *const u32 ?
+    pixels_ptr: *mut u32,
 }
 
 // TODO - here or where?
@@ -101,7 +103,16 @@ impl From<&[u32; MAILBOX_BUFFER_LEN]> for FramebufferResp {
             phy_width: buffer[5],
             phy_height: buffer[6],
             pitch: buffer[33],
-            // ptr: buffer[28] & 0x3FFF_FFFF
+            pixels_ptr: (buffer[28] & 0x3FFF_FFFF) as *mut _,
         }
+    }
+}
+
+impl FramebufferResp {
+    /// RGB b[0] = Red, b[1] = Green, b[2] = Blue, b[3] = NA
+    pub fn set_pixel(&mut self, x: u32, y: u32, value: u32) {
+        let offset = (y * (self.pitch / 4)) + x;
+        unsafe { ptr::write(self.pixels_ptr.offset(offset as _), value) };
+        //unsafe { ptr::write_volatile(self.pixels_ptr.offset(offset as _), value) };
     }
 }
