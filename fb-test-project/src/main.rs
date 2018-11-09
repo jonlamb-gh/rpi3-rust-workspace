@@ -14,6 +14,7 @@ mod serial;
 use bcm2837::mbox::MBOX;
 use bcm2837::uart0::UART0;
 use core::fmt::Write;
+use mailbox::msg::blank_screen::BlankScreenCmd;
 use mailbox::msg::framebuffer::FramebufferCmd;
 use mailbox::msg::Resp;
 use mailbox::{channel, Mailbox};
@@ -61,6 +62,14 @@ fn kernel_entry() -> ! {
             }
         }
     }
+
+    let cmd = BlankScreenCmd { state: true };
+
+    writeln!(serial, "cmd = {:#?}", cmd).ok();
+
+    let resp = mbox.call(channel::PROP, &cmd);
+
+    writeln!(serial, "resp = {:#?}", resp).ok();
 
     // TODO
     loop {}

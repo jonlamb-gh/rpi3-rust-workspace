@@ -63,7 +63,7 @@ fn kernel_entry() -> ! {
 
     if let Ok(resp) = resp {
         if let Resp::FramebufferResp(mut fb_resp) = resp {
-            let mut display = Display::new(fb_resp);
+            let mut display = Display::from(fb_resp);
             render_display(&mut display);
         }
     }

@@ -38,10 +38,6 @@ pub struct FramebufferResp {
     pixels_ptr: *mut u32,
 }
 
-// TODO - here or where?
-// impl FramebufferResp
-// fn set_pixel(...)
-
 impl MailboxBufferConstructor for FramebufferCmd {
     fn construct_buffer(&self, buffer: &mut [u32; MAILBOX_BUFFER_LEN]) {
         buffer[0] = 35 * 4;

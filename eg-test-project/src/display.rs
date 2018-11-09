@@ -1,7 +1,9 @@
 use embedded_graphics::drawable::Pixel;
 use embedded_graphics::pixelcolor::PixelColor;
 use embedded_graphics::Drawing;
-use mailbox::msg::framebuffer::FramebufferResp;
+use mailbox::msg::framebuffer::{FramebufferCmd, FramebufferResp};
+use mailbox::msg::Resp;
+use mailbox::{channel, Mailbox, MboxError, Result};
 use rgb::*;
 
 #[repr(C)]
@@ -56,13 +58,36 @@ impl DisplayColor {
     }
 }
 
+const DEFAULT_FB_CFG: FramebufferCmd = FramebufferCmd {
+    phy_width: 240,
+    phy_height: 240,
+
+    virt_width: 240,
+    virt_height: 240,
+
+    x_offset: 0,
+    y_offset: 0,
+};
+
 pub struct Display {
     fb_data: FramebufferResp,
 }
 
 impl Display {
-    pub fn new(fb_data: FramebufferResp) -> Self {
-        Self { fb_data }
+    pub fn new(cfgcmd: Option<FramebufferCmd>, mbox: &mut Mailbox) -> Result<Self> {
+        let cmd = if let Some(cfgcmd) = cfgcmd {
+            cfgcmd
+        } else {
+            DEFAULT_FB_CFG
+        };
+
+        let resp = mbox.call(channel::PROP, &cmd)?;
+
+        if let Resp::FramebufferResp(fb_resp) = resp {
+            Ok(Display::from(fb_resp))
+        } else {
+            Err(MboxError::ResponseError)
+        }
     }
 
     pub fn width(&self) -> u32 {
@@ -71,6 +96,12 @@ impl Display {
 
     pub fn height(&self) -> u32 {
         self.fb_data.phy_height
+    }
+}
+
+impl From<FramebufferResp> for Display {
+    fn from(resp: FramebufferResp) -> Display {
+        Display { fb_data: resp }
     }
 }
 
