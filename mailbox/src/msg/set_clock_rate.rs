@@ -43,7 +43,7 @@ impl From<&[u32; MAILBOX_BUFFER_LEN]> for SetClockRateResp {
     fn from(buffer: &[u32; MAILBOX_BUFFER_LEN]) -> SetClockRateResp {
         // some of these can be moved up a level or so
         assert_eq!(buffer[2], TAG);
-        assert_eq!(buffer[4], RESP_LEN);
+        //assert_eq!(buffer[4], RESP_LEN);
         SetClockRateResp {
             clock_id: buffer[5],
             freq: buffer[6],

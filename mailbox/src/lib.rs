@@ -55,6 +55,8 @@ pub const REQUEST: u32 = 0;
 
 pub const MAILBOX_BUFFER_LEN: usize = 36;
 
+#[repr(C)]
+#[repr(align(16))]
 pub struct Mailbox {
     mbox: MBOX,
     buffer: [u32; MAILBOX_BUFFER_LEN],
