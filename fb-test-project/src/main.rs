@@ -13,6 +13,7 @@ mod serial;
 
 use bcm2837::mbox::MBOX;
 use bcm2837::uart0::UART0;
+use core::fmt::Write;
 use mailbox::Mailbox;
 use serial::Serial;
 
@@ -20,7 +21,7 @@ entry!(kernel_entry);
 
 fn kernel_entry() -> ! {
     let mut mbox = Mailbox::new(MBOX::new());
-    let serial = Serial::new(UART0::new());
+    let mut serial = Serial::new(UART0::new());
 
     // set up serial console
     if serial.init(&mut mbox).is_err() {
@@ -30,7 +31,7 @@ fn kernel_entry() -> ! {
         }
     }
 
-    serial.puts("Hello World\n");
+    writeln!(serial, "Hello World");
 
     // TODO
     loop {}

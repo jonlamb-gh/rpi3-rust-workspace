@@ -10,6 +10,7 @@ pub const TAG: u32 = 0x38002;
 pub const CMD_LEN: u32 = 12;
 pub const RESP_LEN: u32 = 8;
 
+#[derive(Debug)]
 pub struct SetClockRateCmd {
     // TODO - enum
     pub clock_id: u32,
@@ -17,6 +18,7 @@ pub struct SetClockRateCmd {
     pub flags: u32,
 }
 
+#[derive(Debug)]
 pub struct SetClockRateResp {
     pub clock_id: u32,
     pub freq: u32,
