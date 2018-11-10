@@ -1,6 +1,6 @@
 #![no_std]
 #![no_main]
-#![feature(asm)]
+#![feature(core_intrinsics, asm)]
 
 extern crate bcm2837;
 extern crate cortex_a;
@@ -13,19 +13,18 @@ extern crate rgb;
 #[macro_use]
 extern crate raspi3_boot;
 
+mod panic_handler;
 mod serial;
-
-use heapless::consts::U32;
-use heapless::String;
-
-use embedded_graphics::coord::Coord;
-use embedded_graphics::fonts::Font12x16;
-use embedded_graphics::prelude::*;
 
 use bcm2837::mbox::MBOX;
 use bcm2837::uart0::UART0;
 use core::fmt::Write;
 use display::Display;
+use embedded_graphics::coord::Coord;
+use embedded_graphics::fonts::Font12x16;
+use embedded_graphics::prelude::*;
+use heapless::consts::U32;
+use heapless::String;
 use mailbox::channel;
 use mailbox::msg::get_temperature::GetTemperatureCmd;
 use mailbox::msg::Resp;

@@ -31,6 +31,7 @@
 
 //! Low-level boot of the Raspberry's processor
 
+#[cfg(feature = "panic-and-abort")]
 extern crate panic_abort;
 extern crate r0;
 
