@@ -7,6 +7,7 @@ extern crate rgb;
 use embedded_graphics::drawable::Pixel;
 use embedded_graphics::pixelcolor::PixelColor;
 use embedded_graphics::Drawing;
+use mailbox::msg::blank_screen::BlankScreenCmd;
 use mailbox::msg::framebuffer::{FramebufferCmd, FramebufferResp};
 use mailbox::msg::Resp;
 use mailbox::{channel, Mailbox, MboxError, Result};
@@ -102,6 +103,12 @@ impl Display {
 
     pub fn height(&self) -> u32 {
         self.fb_data.phy_height
+    }
+
+    #[inline]
+    pub fn clear_screen(&self, mbox: &mut Mailbox) {
+        let cmd = BlankScreenCmd { state: true };
+        mbox.call(channel::PROP, &cmd).ok();
     }
 }
 

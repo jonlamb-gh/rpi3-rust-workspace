@@ -26,10 +26,11 @@ use bcm2837::mbox::MBOX;
 use bcm2837::uart0::UART0;
 use core::fmt::Write;
 use display::Display;
-use mailbox::{
-    channel, msg::blank_screen::BlankScreenCmd, msg::get_temperature::GetTemperatureCmd, msg::Resp,
-    Mailbox,
-};
+use mailbox::channel;
+use mailbox::msg::get_temperature::GetTemperatureCmd;
+use mailbox::msg::Resp;
+use mailbox::Mailbox;
+
 use serial::Serial;
 
 entry!(kernel_entry);
@@ -52,10 +53,7 @@ fn kernel_entry() -> ! {
 
     let mut value_str: String<U32> = String::from("NA");
     loop {
-        let cmd = BlankScreenCmd { state: true };
-
-        // Clear the display
-        mbox.call(channel::PROP, &cmd).ok();
+        display.clear_screen(&mut mbox);
 
         let cmd = GetTemperatureCmd { id: 0 };
 
