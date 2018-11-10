@@ -6,6 +6,7 @@ extern crate bcm2837;
 extern crate cortex_a;
 extern crate display;
 extern crate embedded_graphics;
+extern crate heapless;
 extern crate mailbox;
 extern crate rgb;
 
@@ -14,10 +15,12 @@ extern crate raspi3_boot;
 
 mod serial;
 
+use heapless::consts::U32;
+use heapless::String;
+
 use embedded_graphics::coord::Coord;
 use embedded_graphics::fonts::Font12x16;
 use embedded_graphics::prelude::*;
-use embedded_graphics::primitives::{Circle, Line, Rect};
 
 use bcm2837::mbox::MBOX;
 use bcm2837::uart0::UART0;
@@ -47,6 +50,7 @@ fn kernel_entry() -> ! {
 
     let mut display = Display::new(None, &mut mbox).unwrap();
 
+    let mut value_str: String<U32> = String::from("NA");
     loop {
         let cmd = BlankScreenCmd { state: true };
 
@@ -68,8 +72,15 @@ fn kernel_entry() -> ! {
             None
         };
 
+        value_str.clear();
+        if let Some(temp) = temp {
+            write!(value_str, "{} C", temp).ok();
+        } else {
+            write!(value_str, "NA/ERR").ok();
+        }
+
         display.draw(
-            Font12x16::render_str("Hello World!")
+            Font12x16::render_str(&value_str)
                 .with_stroke(Some((0xFF, 0xFF, 0xFF).into()))
                 .translate(Coord::new(5, 45))
                 .into_iter(),

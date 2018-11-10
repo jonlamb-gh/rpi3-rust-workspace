@@ -4,10 +4,10 @@
 
 extern crate bcm2837;
 extern crate cortex_a;
+extern crate display;
 extern crate embedded_graphics;
 extern crate mailbox;
 extern crate rgb;
-extern crate display;
 
 #[macro_use]
 extern crate raspi3_boot;
