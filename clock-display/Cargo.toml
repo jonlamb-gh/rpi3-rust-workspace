@@ -1,0 +1,18 @@
+[package]
+name = "clock-display"
+version = "0.1.0"
+authors = ["Jon Lamb"]
+edition = "2015"
+
+[dependencies]
+cortex-a = "2.2"
+bcm2837 = { path = "../bcm2837" }
+mailbox = { path = "../mailbox" }
+display = { path = "../display" }
+embedded-graphics = "0.4"
+rgb = "0.8"
+
+[dependencies.raspi3_boot]
+path = "../raspi3_boot"
+default-features = false
+features = []

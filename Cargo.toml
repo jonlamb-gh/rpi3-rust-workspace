@@ -8,4 +8,5 @@ members = [
     "fb-test-project",
     "eg-test-project",
     "display-mbox-props",
+    "clock-display",
 ]
