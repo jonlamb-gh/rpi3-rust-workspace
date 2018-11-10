@@ -7,6 +7,7 @@ extern crate cortex_a;
 extern crate display;
 extern crate embedded_graphics;
 extern crate mailbox;
+extern crate nalgebra as na;
 extern crate rgb;
 
 #[macro_use]
@@ -62,10 +63,10 @@ fn kernel_entry() -> ! {
         let w: i32 = display.width() as _;
         let h: i32 = display.height() as _;
 
-        // red rectangle
         display.draw(
-            Rect::new(Coord::new(0, 0), Coord::new(w - 1, h - 1))
+            Circle::new(Coord::new(w / 2, h / 2), (h / 2) as u32 - 20)
                 .with_stroke(Some((0xFF, 0x00, 0x00).into()))
+                .with_fill(Some((0xFF, 0xFF, 0x00).into()))
                 .into_iter(),
         );
     }
