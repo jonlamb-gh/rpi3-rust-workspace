@@ -24,8 +24,9 @@ use display::Display;
 use embedded_graphics::coord::Coord;
 use mailbox::msg::framebuffer::FramebufferCmd;
 use mailbox::Mailbox;
+use rgb::RGB8;
 
-use graphics::bar_graph::BarGraph;
+use graphics::bar_graph::{BarGraph, Config as BarGraphConfig};
 use serial::Serial;
 
 entry!(kernel_entry);
@@ -57,7 +58,16 @@ fn kernel_entry() -> ! {
 
     let mut display = Display::new(Some(fb_cfg), &mut mbox).unwrap();
 
-    let bar_graph = BarGraph::new(Coord::new(100, 50), Coord::new(150, 250));
+    let bar_graph_config = BarGraphConfig {
+        top_left: Coord::new(100, 50),
+        bottom_right: Coord::new(150, 250),
+        background_color: RGB8::new(0x00, 0xAF, 0xCF),
+        fill_color: RGB8::new(0x00, 0xAF, 0xCF),
+        text_color: RGB8::new(0x00, 0xAF, 0xCF),
+        stroke_color: RGB8::new(0x00, 0xAF, 0xCF),
+    };
+
+    let mut bar_graph = BarGraph::new(bar_graph_config);
 
     loop {
         display.clear_screen(&mut mbox);
@@ -74,7 +84,8 @@ fn kernel_entry() -> ! {
         );
         */
 
-        bar_graph.test_draw(&mut display, 0.25);
+        bar_graph.set_value(0.25);
+        bar_graph.test_draw(&mut display);
 
         loop {}
     }
