@@ -52,6 +52,13 @@ impl From<(u8, u8, u8)> for DisplayColor {
     }
 }
 
+impl From<RGB8> for DisplayColor {
+    #[inline]
+    fn from(other: RGB8) -> Self {
+        DisplayColor(other)
+    }
+}
+
 impl From<DisplayColor> for u32 {
     #[inline]
     fn from(color: DisplayColor) -> u32 {

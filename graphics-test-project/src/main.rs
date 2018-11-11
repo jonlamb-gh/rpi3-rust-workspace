@@ -61,10 +61,10 @@ fn kernel_entry() -> ! {
     let bar_graph_config = BarGraphConfig {
         top_left: Coord::new(100, 50),
         bottom_right: Coord::new(150, 250),
-        background_color: RGB8::new(0x00, 0xAF, 0xCF),
+        background_color: RGB8::new(0xF0, 0x0F, 0xCF),
         fill_color: RGB8::new(0x00, 0xAF, 0xCF),
-        text_color: RGB8::new(0x00, 0xAF, 0xCF),
-        stroke_color: RGB8::new(0x00, 0xAF, 0xCF),
+        text_color: RGB8::new(0xFF, 0xFF, 0xFF),
+        stroke_color: RGB8::new(0xFF, 0xFF, 0xFF),
     };
 
     let mut bar_graph = BarGraph::new(bar_graph_config);

@@ -9,14 +9,14 @@ use embedded_graphics::coord::Coord;
 use embedded_graphics::fonts::Font12x16;
 use embedded_graphics::prelude::*;
 use embedded_graphics::primitives::Rect;
+// TODO - for the interator
 //use embedded_graphics::style::Style;
 //use embedded_graphics::drawable::Pixel;
 //use embedded_graphics::pixelcolor::PixelColor;
-use rgb::RGB8;
-//use display::DisplayColor;
 use display::Display;
 use heapless::consts::U32;
 use heapless::String;
+use rgb::RGB8;
 
 // TODO - use Style<RGB8>?
 pub struct Config {
@@ -25,8 +25,7 @@ pub struct Config {
     pub background_color: RGB8,
     pub fill_color: RGB8,
     pub text_color: RGB8,
-    pub stroke_color: RGB8
-    //style: Style,
+    pub stroke_color: RGB8, //style: Style
 }
 
 pub struct BarGraph {
@@ -74,12 +73,16 @@ impl BarGraph {
         let fill_dist = scaled as i32;
 
         // drawing back to front, start with the fill
+        // TODO - start with background
         if fill_dist > 0 {
             display.draw(
                 Rect::new(
-                    Coord::new(self.config.top_left.0, self.config.bottom_right.1 - fill_dist),
+                    Coord::new(
+                        self.config.top_left.0,
+                        self.config.bottom_right.1 - fill_dist,
+                    ),
                     self.config.bottom_right,
-                ).with_fill(Some((0x00, 0xAF, 0xCF).into()))
+                ).with_fill(Some(self.config.fill_color.into()))
                 .into_iter(),
             );
         }
@@ -87,8 +90,8 @@ impl BarGraph {
         // TODO - fill color only set when fill/value exceeds text position?
         // or just set a background color and float the value above it until filled?
         let text = Font12x16::render_str(&value_str)
-            .with_fill(Some((0x00, 0xAF, 0xCF).into()))
-            .with_stroke(Some((0xFF, 0xFF, 0xFF).into()));
+            .with_fill(Some(self.config.background_color.into()))
+            .with_stroke(Some(self.config.text_color.into()));
         display.draw(
             text.translate(Coord::new(
                 self.center_x - (text.dimensions().0 as i32 / 2),
@@ -98,7 +101,7 @@ impl BarGraph {
 
         display.draw(
             Rect::new(self.config.top_left, self.config.bottom_right)
-                .with_stroke(Some((0xFF, 0xFF, 0xFF).into()))
+                .with_stroke(Some(self.config.stroke_color.into()))
                 .with_stroke_width(2)
                 .into_iter(),
         );
