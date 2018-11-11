@@ -38,7 +38,7 @@ pub struct BarGraph {
     center_y: i32,
 }
 
-const TEXT_V_PADDING: i32 = 1;
+const TEXT_V_PADDING: i32 = 3;
 
 impl BarGraph {
     pub fn new(config: Config) -> Self {
@@ -78,8 +78,18 @@ impl BarGraph {
         // drawing back to front,
         if fill_dist <= 0 {
             // empty
+            display.draw(
+                Rect::new(self.config.top_left, self.config.bottom_right)
+                    .with_fill(Some(self.config.background_color.into()))
+                    .into_iter(),
+            );
         } else if fill_dist >= self.height {
             // full
+            display.draw(
+                Rect::new(self.config.top_left, self.config.bottom_right)
+                    .with_fill(Some(self.config.fill_color.into()))
+                    .into_iter(),
+            );
         } else if fill_dist > 0 {
             // in between, start with the background color
             display.draw(
