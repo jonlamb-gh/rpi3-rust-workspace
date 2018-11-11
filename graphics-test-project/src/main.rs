@@ -14,6 +14,7 @@ extern crate raspi3_boot;
 
 mod panic_handler;
 mod serial;
+mod graphics;
 
 use bcm2837::mbox::MBOX;
 use bcm2837::uart0::UART0;
@@ -25,6 +26,7 @@ use embedded_graphics::primitives::Circle;
 use mailbox::msg::framebuffer::FramebufferCmd;
 use mailbox::Mailbox;
 
+use graphics::bar_graph::BarGraph;
 use serial::Serial;
 
 entry!(kernel_entry);
