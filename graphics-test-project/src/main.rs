@@ -45,11 +45,11 @@ fn kernel_entry() -> ! {
     writeln!(serial, "Hello World").ok();
 
     let fb_cfg = FramebufferCmd {
-        phy_width: 240,
-        phy_height: 240,
+        phy_width: 800,
+        phy_height: 480,
 
-        virt_width: 240,
-        virt_height: 240,
+        virt_width: 800,
+        virt_height: 480,
 
         x_offset: 0,
         y_offset: 0,
@@ -57,7 +57,7 @@ fn kernel_entry() -> ! {
 
     let mut display = Display::new(Some(fb_cfg), &mut mbox).unwrap();
 
-    let bar_graph = BarGraph::new(Coord::new(100, 10), Coord::new(150, 230));
+    let bar_graph = BarGraph::new(Coord::new(100, 50), Coord::new(150, 250));
 
     loop {
         display.clear_screen(&mut mbox);
@@ -74,7 +74,7 @@ fn kernel_entry() -> ! {
         );
         */
 
-        bar_graph.test_draw(&mut display, 0.1);
+        bar_graph.test_draw(&mut display, 0.25);
 
         loop {}
     }

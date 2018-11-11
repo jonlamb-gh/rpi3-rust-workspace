@@ -1,6 +1,7 @@
 // TODO
 // - horizontal/vertical
 // - value/label
+// - config/style/fonts/colors/etc
 
 use core::fmt::Write;
 use embedded_graphics::coord::Coord;
@@ -81,6 +82,7 @@ impl BarGraph {
         display.draw(
             Rect::new(self.top_left, self.bottom_right)
                 .with_stroke(Some((0xFF, 0xFF, 0xFF).into()))
+                .with_stroke_width(2)
                 .into_iter(),
         );
     }
