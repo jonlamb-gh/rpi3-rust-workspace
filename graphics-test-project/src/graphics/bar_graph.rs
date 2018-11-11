@@ -185,3 +185,27 @@ impl BarGraph {
             )
     }
 }
+
+impl<'a> IntoIterator for &'a BarGraph {
+    type Item = Pixel<DisplayColor>;
+    type IntoIter = BarGraphIterator;
+
+    fn into_iter(self) -> Self::IntoIter {
+        BarGraphIterator {
+            // TODO
+        }
+    }
+}
+
+#[derive(Debug, Copy, Clone)]
+pub struct BarGraphIterator {
+    // TODO
+}
+
+impl Iterator for BarGraphIterator {
+    type Item = Pixel<DisplayColor>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        None
+    }
+}

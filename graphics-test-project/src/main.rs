@@ -89,7 +89,9 @@ fn kernel_entry() -> ! {
         bar_graph.set_value(0.90);
         //bar_graph.test_draw(&mut display);
 
-        display.draw(bar_graph.test_obj());
+        //display.draw(bar_graph.test_obj());
+
+        display.draw(bar_graph.into_iter());
 
         loop {}
     }
