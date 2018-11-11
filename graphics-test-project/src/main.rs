@@ -65,6 +65,7 @@ fn kernel_entry() -> ! {
         fill_color: RGB8::new(0x00, 0xAF, 0xCF),
         text_color: RGB8::new(0xFF, 0xFF, 0xFF),
         stroke_color: RGB8::new(0xFF, 0xFF, 0xFF),
+        stroke_width: 2,
     };
 
     let mut bar_graph = BarGraph::new(bar_graph_config);
@@ -84,7 +85,7 @@ fn kernel_entry() -> ! {
         );
         */
 
-        bar_graph.set_value(0.25);
+        bar_graph.set_value(0.90);
         bar_graph.test_draw(&mut display);
 
         loop {}

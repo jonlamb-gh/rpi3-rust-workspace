@@ -1,8 +1,8 @@
 // TODO
 // - error/sanity checks
 // - horizontal/vertical
-// - value/label
-// - config/style/fonts/colors/etc
+// - use Style<RGB8>?
+// - iterator
 
 use core::fmt::Write;
 use embedded_graphics::coord::Coord;
@@ -26,6 +26,7 @@ pub struct Config {
     pub fill_color: RGB8,
     pub text_color: RGB8,
     pub stroke_color: RGB8, //style: Style
+    pub stroke_width: u8,
 }
 
 pub struct BarGraph {
@@ -36,6 +37,8 @@ pub struct BarGraph {
     center_x: i32,
     center_y: i32,
 }
+
+const TEXT_V_PADDING: i32 = 1;
 
 impl BarGraph {
     pub fn new(config: Config) -> Self {
@@ -72,9 +75,25 @@ impl BarGraph {
         let scaled = self.value * (self.height as f32);
         let fill_dist = scaled as i32;
 
-        // drawing back to front, start with the fill
-        // TODO - start with background
-        if fill_dist > 0 {
+        // drawing back to front,
+        if fill_dist <= 0 {
+            // empty
+        } else if fill_dist >= self.height {
+            // full
+        } else if fill_dist > 0 {
+            // in between, start with the background color
+            display.draw(
+                Rect::new(
+                    self.config.top_left,
+                    Coord::new(
+                        self.config.bottom_right.0,
+                        self.config.bottom_right.1 - fill_dist,
+                    ),
+                ).with_fill(Some(self.config.background_color.into()))
+                .into_iter(),
+            );
+
+            // graph fill color
             display.draw(
                 Rect::new(
                     Coord::new(
@@ -87,22 +106,49 @@ impl BarGraph {
             );
         }
 
-        // TODO - fill color only set when fill/value exceeds text position?
-        // or just set a background color and float the value above it until filled?
-        let text = Font12x16::render_str(&value_str)
-            .with_fill(Some(self.config.background_color.into()))
-            .with_stroke(Some(self.config.text_color.into()));
+        let text =
+            Font12x16::render_str(&value_str).with_stroke(Some(self.config.text_color.into()));
+
+        let room_needed = self.height - (text.dimensions().1 as i32) - (4 * TEXT_V_PADDING);
+        let room_above = if fill_dist <= room_needed {
+            true
+        } else {
+            false
+        };
+
+        // put the text above the fill line if we have room
+        let (text_coord, text_bg_color) = if room_above {
+            (
+                Coord::new(
+                    self.center_x - (text.dimensions().0 as i32 / 2),
+                    self.config.bottom_right.1
+                        - fill_dist
+                        - (text.dimensions().1 as i32)
+                        - TEXT_V_PADDING,
+                ),
+                self.config.background_color,
+            )
+        } else {
+            // otherwise put it below
+            (
+                Coord::new(
+                    self.center_x - (text.dimensions().0 as i32 / 2),
+                    self.config.bottom_right.1 - fill_dist + TEXT_V_PADDING,
+                ),
+                self.config.fill_color,
+            )
+        };
+
         display.draw(
-            text.translate(Coord::new(
-                self.center_x - (text.dimensions().0 as i32 / 2),
-                self.center_y,
-            )).into_iter(),
+            text.with_fill(Some(text_bg_color.into()))
+                .translate(text_coord)
+                .into_iter(),
         );
 
         display.draw(
             Rect::new(self.config.top_left, self.config.bottom_right)
                 .with_stroke(Some(self.config.stroke_color.into()))
-                .with_stroke_width(2)
+                .with_stroke_width(self.config.stroke_width)
                 .into_iter(),
         );
     }
