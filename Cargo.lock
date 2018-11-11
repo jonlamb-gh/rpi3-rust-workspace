@@ -105,6 +105,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "gui"
+version = "0.1.0"
+dependencies = [
+ "display 0.1.0",
+ "embedded-graphics 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rgb 0.8.11 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "hash32"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

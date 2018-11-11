@@ -5,6 +5,7 @@ members = [
     "bcm2837",
     "mailbox",
     "display",
+    "gui",
     "fb-test-project",
     "eg-test-project",
     "display-mbox-props",
