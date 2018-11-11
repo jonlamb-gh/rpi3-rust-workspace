@@ -22,6 +22,7 @@ use bcm2837::uart0::UART0;
 use core::fmt::Write;
 use display::Display;
 use embedded_graphics::coord::Coord;
+use embedded_graphics::prelude::*;
 use mailbox::msg::framebuffer::FramebufferCmd;
 use mailbox::Mailbox;
 use rgb::RGB8;
@@ -86,7 +87,9 @@ fn kernel_entry() -> ! {
         */
 
         bar_graph.set_value(0.90);
-        bar_graph.test_draw(&mut display);
+        //bar_graph.test_draw(&mut display);
+
+        display.draw(bar_graph.test_obj());
 
         loop {}
     }

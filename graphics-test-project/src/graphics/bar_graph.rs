@@ -3,17 +3,24 @@
 // - horizontal/vertical
 // - use Style<RGB8>?
 // - iterator
+// - impl Drawable for BarGraph {}
 
 use core::fmt::Write;
+use core::iter::Chain;
 use embedded_graphics::coord::Coord;
 use embedded_graphics::fonts::Font12x16;
 use embedded_graphics::prelude::*;
+use embedded_graphics::primitives::circle::CircleIterator;
+use embedded_graphics::primitives::rect::RectIterator;
+use embedded_graphics::primitives::Circle;
 use embedded_graphics::primitives::Rect;
 // TODO - for the interator
 //use embedded_graphics::style::Style;
-//use embedded_graphics::drawable::Pixel;
+use embedded_graphics::drawable::Pixel;
 //use embedded_graphics::pixelcolor::PixelColor;
 use display::Display;
+use display::DisplayColor;
+use embedded_graphics::drawable::Drawable;
 use heapless::consts::U32;
 use heapless::String;
 use rgb::RGB8;
@@ -99,7 +106,8 @@ impl BarGraph {
                         self.config.bottom_right.0,
                         self.config.bottom_right.1 - fill_dist,
                     ),
-                ).with_fill(Some(self.config.background_color.into()))
+                )
+                .with_fill(Some(self.config.background_color.into()))
                 .into_iter(),
             );
 
@@ -111,7 +119,8 @@ impl BarGraph {
                         self.config.bottom_right.1 - fill_dist,
                     ),
                     self.config.bottom_right,
-                ).with_fill(Some(self.config.fill_color.into()))
+                )
+                .with_fill(Some(self.config.fill_color.into()))
                 .into_iter(),
             );
         }
@@ -162,13 +171,17 @@ impl BarGraph {
                 .into_iter(),
         );
     }
-}
 
-/*
-impl IntoIterator for BarGraph {
-    type Item = Pixel<DisplayColor>;
-
-    fn into_iter(self) -> Self::IntoIter {
+    // hack until proper iterator is implemented
+    pub fn test_obj(&self) -> Chain<RectIterator<DisplayColor>, CircleIterator<DisplayColor>> {
+        Rect::new(self.config.top_left, self.config.bottom_right)
+            .with_stroke(Some(self.config.stroke_color.into()))
+            .with_stroke_width(self.config.stroke_width)
+            .into_iter()
+            .chain(
+                Circle::new(Coord::new(200, 200), 50)
+                    .with_stroke(Some(self.config.stroke_color.into()))
+                    .into_iter(),
+            )
     }
 }
-*/
