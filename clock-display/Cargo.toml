@@ -10,18 +10,9 @@ bcm2837 = { path = "../bcm2837" }
 mailbox = { path = "../mailbox" }
 display = { path = "../display" }
 rgb = "0.8"
+embedded-graphics = "0.4"
 
 [dependencies.raspi3_boot]
 path = "../raspi3_boot"
-default-features = false
-features = []
-
-[dependencies.embedded-graphics]
-version = "0.4"
-default-features = false
-features = ["nalgebra_support"]
-
-[dependencies.nalgebra]
-version = "*"
 default-features = false
 features = []

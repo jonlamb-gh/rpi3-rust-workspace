@@ -7,7 +7,6 @@ extern crate cortex_a;
 extern crate display;
 extern crate embedded_graphics;
 extern crate mailbox;
-extern crate nalgebra as na;
 extern crate rgb;
 
 #[macro_use]
