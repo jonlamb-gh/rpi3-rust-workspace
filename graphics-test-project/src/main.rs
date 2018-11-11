@@ -6,23 +6,22 @@ extern crate bcm2837;
 extern crate cortex_a;
 extern crate display;
 extern crate embedded_graphics;
+extern crate heapless;
 extern crate mailbox;
 extern crate rgb;
 
 #[macro_use]
 extern crate raspi3_boot;
 
+mod graphics;
 mod panic_handler;
 mod serial;
-mod graphics;
 
 use bcm2837::mbox::MBOX;
 use bcm2837::uart0::UART0;
 use core::fmt::Write;
 use display::Display;
 use embedded_graphics::coord::Coord;
-use embedded_graphics::prelude::*;
-use embedded_graphics::primitives::Circle;
 use mailbox::msg::framebuffer::FramebufferCmd;
 use mailbox::Mailbox;
 
@@ -58,11 +57,25 @@ fn kernel_entry() -> ! {
 
     let mut display = Display::new(Some(fb_cfg), &mut mbox).unwrap();
 
-    let bar_graph = BarGraph::new();
+    let bar_graph = BarGraph::new(Coord::new(100, 10), Coord::new(150, 230));
 
     loop {
         display.clear_screen(&mut mbox);
 
-        bar_graph.test_draw(&mut display);
+        // QEMU doesn't seem to clear the display/framebuffer?
+        /*
+        use embedded_graphics::prelude::*;
+        use embedded_graphics::primitives::Rect;
+        display.draw(
+            Rect::new(
+                Coord::new(99, 9), Coord::new(151, 231))
+                .with_fill(Some((0x00, 0x00, 0x00).into()))
+                .into_iter(),
+        );
+        */
+
+        bar_graph.test_draw(&mut display, 0.1);
+
+        loop {}
     }
 }
