@@ -9,4 +9,5 @@ members = [
     "eg-test-project",
     "display-mbox-props",
     "clock-display",
+    "graphics-test-project",
 ]

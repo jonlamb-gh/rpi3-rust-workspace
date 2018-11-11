@@ -114,6 +114,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "graphics-test-project"
+version = "0.1.0"
+dependencies = [
+ "bcm2837 0.1.0",
+ "cortex-a 2.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "display 0.1.0",
+ "embedded-graphics 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "mailbox 0.1.0",
+ "raspi3_boot 0.1.0",
+ "rgb 0.8.11 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "hash32"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
