@@ -6,7 +6,8 @@ use embedded_graphics::prelude::*;
 use embedded_graphics::drawable::Pixel;
 use embedded_graphics::pixelcolor::PixelColor;
 
-use display::DisplayColor;
+//use display::DisplayColor;
+use display::Display;
 
 pub struct BarGraph {
     top_left: Coord,
@@ -22,12 +23,12 @@ impl BarGraph {
         }
     }
 
-    pub fn object(&self) {
-        Circle::new(Coord::new(w / 2, h / 2), (h / 2) as u32 - 20)
-            .with_stroke(Some((0xFF, 0x00, 0x00).into()))
-            .with_fill(Some((0xFF, 0xFF, 0x00).into()))
-            .into_iter()
-            .chain(Circle::new(Coord::new(10, 10), 2).into_iter())
+    pub fn test_draw(&self, display: &mut Display) {
+        display.draw(
+            Rect::new(self.top_left, self.bottom_right)
+                .with_stroke(Some((0xFF, 0x00, 0x00).into()))
+                .into_iter(),
+        );
     }
 }
 
