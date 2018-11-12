@@ -17,6 +17,7 @@ use heapless::String;
 use rgb::RGB8;
 
 // TODO - use Style<RGB8>?
+#[derive(Debug, Copy, Clone)]
 pub struct Config {
     pub top_left: Coord,
     pub bottom_right: Coord,

@@ -14,6 +14,7 @@ use heapless::String;
 use rgb::RGB8;
 
 // TODO - use Style<RGB8>?
+#[derive(Debug, Copy, Clone)]
 pub struct Config {
     pub center: Coord,
     pub radius: u32,
@@ -34,13 +35,18 @@ impl CircleDigit {
     pub fn new(config: Config) -> Self {
         Self {
             config,
-            value_str: String::new(),
+            value_str: String::from("0"),
             value: 0,
         }
     }
 
+    pub fn config(&self) -> &Config {
+        &self.config
+    }
+
     pub fn set_value(&mut self, value: u32) {
         self.value = value;
+        self.value_str.clear();
         write!(self.value_str, "{}", self.value).ok();
     }
 

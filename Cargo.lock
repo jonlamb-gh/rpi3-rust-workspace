@@ -18,6 +18,7 @@ dependencies = [
  "cortex-a 2.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "display 0.1.0",
  "embedded-graphics 0.4.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "gui 0.1.0",
  "mailbox 0.1.0",
  "raspi3_boot 0.1.0",
  "rgb 0.8.11 (registry+https://github.com/rust-lang/crates.io-index)",

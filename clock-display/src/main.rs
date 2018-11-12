@@ -6,25 +6,27 @@ extern crate bcm2837;
 extern crate cortex_a;
 extern crate display;
 extern crate embedded_graphics;
+extern crate gui;
 extern crate mailbox;
 extern crate rgb;
 
 #[macro_use]
 extern crate raspi3_boot;
 
+mod clock;
 mod panic_handler;
 mod serial;
 
 use bcm2837::mbox::MBOX;
 use bcm2837::uart0::UART0;
 use core::fmt::Write;
-use display::Display;
+use display::{Display, ObjectDrawing};
 use embedded_graphics::coord::Coord;
-use embedded_graphics::prelude::*;
-use embedded_graphics::primitives::{Circle, Line, Rect};
 use mailbox::msg::framebuffer::FramebufferCmd;
 use mailbox::Mailbox;
+use rgb::RGB8;
 
+use clock::{Clock, Config as ClockConfig};
 use serial::Serial;
 
 entry!(kernel_entry);
@@ -56,17 +58,30 @@ fn kernel_entry() -> ! {
 
     let mut display = Display::new(Some(fb_cfg), &mut mbox).unwrap();
 
+    let clock = Clock::new(ClockConfig {
+        center: Coord::new(display.width() as i32 / 2, display.height() as i32 / 2),
+        radius: display.height() / 2,
+        outline_stroke_width: 2,
+        outline_color: RGB8::new(0xFF, 0xFF, 0xFF),
+        /*
+        sec_cd_config: CircleDigitConfig {
+            center: Coord::new(300, 200),
+            radius: 20,
+            fill: true,
+            text_color: RGB8::new(0xFF, 0xFF, 0xFF),
+            background_fill_color: RGB8::new(0x0F, 0xAF, 0xF0),
+            stroke_color: RGB8::new(0xFF, 0xFF, 0xFF),
+            stroke_width: 2,
+        },
+        */
+    });
+
     loop {
         display.clear_screen(&mut mbox);
 
-        let w: i32 = display.width() as _;
-        let h: i32 = display.height() as _;
+        clock.draw_object(&mut display);
 
-        display.draw(
-            Circle::new(Coord::new(w / 2, h / 2), (h / 2) as u32 - 20)
-                .with_stroke(Some((0xFF, 0x00, 0x00).into()))
-                .with_fill(Some((0xFF, 0xFF, 0x00).into()))
-                .into_iter(),
-        );
+        // TESTING
+        loop {}
     }
 }

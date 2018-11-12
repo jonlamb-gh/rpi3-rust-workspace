@@ -9,6 +9,7 @@ cortex-a = "2.2"
 bcm2837 = { path = "../bcm2837" }
 mailbox = { path = "../mailbox" }
 display = { path = "../display" }
+gui = { path = "../gui" }
 rgb = "0.8"
 embedded-graphics = "0.4"
 
