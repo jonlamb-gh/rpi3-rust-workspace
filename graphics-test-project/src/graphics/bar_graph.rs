@@ -6,21 +6,12 @@
 // - impl Drawable for BarGraph {}
 
 use core::fmt::Write;
-use core::iter::Chain;
+use display::{Display, DisplayColor, ObjectDrawing};
 use embedded_graphics::coord::Coord;
+use embedded_graphics::fonts::Font;
 use embedded_graphics::fonts::Font12x16;
 use embedded_graphics::prelude::*;
-use embedded_graphics::primitives::circle::CircleIterator;
-use embedded_graphics::primitives::rect::RectIterator;
-use embedded_graphics::primitives::Circle;
 use embedded_graphics::primitives::Rect;
-// TODO - for the interator
-//use embedded_graphics::style::Style;
-use embedded_graphics::drawable::Pixel;
-//use embedded_graphics::pixelcolor::PixelColor;
-use display::Display;
-use display::DisplayColor;
-use embedded_graphics::drawable::Drawable;
 use heapless::consts::U32;
 use heapless::String;
 use rgb::RGB8;
@@ -36,13 +27,16 @@ pub struct Config {
     pub stroke_width: u8,
 }
 
+// Storing extra state to keep the drawing loops as slim as possible
 pub struct BarGraph {
     config: Config,
+    value_str: String<U32>,
     value: f32,
     width: i32,
     height: i32,
     center_x: i32,
     center_y: i32,
+    fill_dist: i32,
 }
 
 const TEXT_V_PADDING: i32 = 3;
@@ -57,11 +51,13 @@ impl BarGraph {
 
         Self {
             config,
-            value: 0.2,
+            value_str: String::new(),
+            value: 0.0,
             width,
             height,
             center_x,
             center_y,
+            fill_dist: 0,
         }
     }
 
@@ -73,41 +69,38 @@ impl BarGraph {
         } else {
             value
         };
-    }
-
-    pub fn test_draw(&self, display: &mut Display) {
-        let mut value_str: String<U32> = String::new();
-        write!(value_str, "{:.*}", 0, 100.0 * self.value).ok();
 
         let scaled = self.value * (self.height as f32);
-        let fill_dist = scaled as i32;
+        self.fill_dist = scaled as i32;
 
-        // drawing back to front,
-        if fill_dist <= 0 {
+        write!(self.value_str, "{:.*}", 0, 100.0 * self.value).ok();
+    }
+
+    fn draw_fillings(&self, display: &mut Display) {
+        if self.fill_dist <= 0 {
             // empty
             display.draw(
                 Rect::new(self.config.top_left, self.config.bottom_right)
                     .with_fill(Some(self.config.background_color.into()))
                     .into_iter(),
             );
-        } else if fill_dist >= self.height {
+        } else if self.fill_dist >= self.height {
             // full
             display.draw(
                 Rect::new(self.config.top_left, self.config.bottom_right)
                     .with_fill(Some(self.config.fill_color.into()))
                     .into_iter(),
             );
-        } else if fill_dist > 0 {
+        } else {
             // in between, start with the background color
             display.draw(
                 Rect::new(
                     self.config.top_left,
                     Coord::new(
                         self.config.bottom_right.0,
-                        self.config.bottom_right.1 - fill_dist,
+                        self.config.bottom_right.1 - self.fill_dist,
                     ),
-                )
-                .with_fill(Some(self.config.background_color.into()))
+                ).with_fill(Some(self.config.background_color.into()))
                 .into_iter(),
             );
 
@@ -116,20 +109,21 @@ impl BarGraph {
                 Rect::new(
                     Coord::new(
                         self.config.top_left.0,
-                        self.config.bottom_right.1 - fill_dist,
+                        self.config.bottom_right.1 - self.fill_dist,
                     ),
                     self.config.bottom_right,
-                )
-                .with_fill(Some(self.config.fill_color.into()))
+                ).with_fill(Some(self.config.fill_color.into()))
                 .into_iter(),
             );
         }
+    }
 
-        let text =
-            Font12x16::render_str(&value_str).with_stroke(Some(self.config.text_color.into()));
+    fn draw_value_text(&self, display: &mut Display) {
+        let text: Font12x16<DisplayColor> =
+            Font12x16::render_str(&self.value_str).with_stroke(Some(self.config.text_color.into()));
 
         let room_needed = self.height - (text.dimensions().1 as i32) - (4 * TEXT_V_PADDING);
-        let room_above = if fill_dist <= room_needed {
+        let room_above = if self.fill_dist <= room_needed {
             true
         } else {
             false
@@ -141,7 +135,7 @@ impl BarGraph {
                 Coord::new(
                     self.center_x - (text.dimensions().0 as i32 / 2),
                     self.config.bottom_right.1
-                        - fill_dist
+                        - self.fill_dist
                         - (text.dimensions().1 as i32)
                         - TEXT_V_PADDING,
                 ),
@@ -152,7 +146,7 @@ impl BarGraph {
             (
                 Coord::new(
                     self.center_x - (text.dimensions().0 as i32 / 2),
-                    self.config.bottom_right.1 - fill_dist + TEXT_V_PADDING,
+                    self.config.bottom_right.1 - self.fill_dist + TEXT_V_PADDING,
                 ),
                 self.config.fill_color,
             )
@@ -163,7 +157,9 @@ impl BarGraph {
                 .translate(text_coord)
                 .into_iter(),
         );
+    }
 
+    fn draw_outline_rect(&self, display: &mut Display) {
         display.draw(
             Rect::new(self.config.top_left, self.config.bottom_right)
                 .with_stroke(Some(self.config.stroke_color.into()))
@@ -171,41 +167,12 @@ impl BarGraph {
                 .into_iter(),
         );
     }
-
-    // hack until proper iterator is implemented
-    pub fn test_obj(&self) -> Chain<RectIterator<DisplayColor>, CircleIterator<DisplayColor>> {
-        Rect::new(self.config.top_left, self.config.bottom_right)
-            .with_stroke(Some(self.config.stroke_color.into()))
-            .with_stroke_width(self.config.stroke_width)
-            .into_iter()
-            .chain(
-                Circle::new(Coord::new(200, 200), 50)
-                    .with_stroke(Some(self.config.stroke_color.into()))
-                    .into_iter(),
-            )
-    }
 }
 
-impl<'a> IntoIterator for &'a BarGraph {
-    type Item = Pixel<DisplayColor>;
-    type IntoIter = BarGraphIterator;
-
-    fn into_iter(self) -> Self::IntoIter {
-        BarGraphIterator {
-            // TODO
-        }
-    }
-}
-
-#[derive(Debug, Copy, Clone)]
-pub struct BarGraphIterator {
-    // TODO
-}
-
-impl Iterator for BarGraphIterator {
-    type Item = Pixel<DisplayColor>;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        None
+impl ObjectDrawing for BarGraph {
+    fn draw_object(&self, display: &mut Display) {
+        self.draw_fillings(display);
+        self.draw_value_text(display);
+        self.draw_outline_rect(display);
     }
 }

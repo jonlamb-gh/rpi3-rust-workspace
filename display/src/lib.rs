@@ -13,6 +13,13 @@ use mailbox::msg::Resp;
 use mailbox::{channel, Mailbox, MboxError, Result};
 use rgb::*;
 
+// TODO - until I figure out how to cleanly use embedded-graphics IntoIterator
+// to combine primitives,
+// this can be used to pass around a mut Display
+pub trait ObjectDrawing {
+    fn draw_object(&self, display: &mut Display);
+}
+
 #[repr(C)]
 #[derive(Copy, Clone, Debug, Default, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct DisplayColor(pub RGB8);

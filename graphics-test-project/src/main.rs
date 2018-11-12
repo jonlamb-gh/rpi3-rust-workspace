@@ -20,9 +20,8 @@ mod serial;
 use bcm2837::mbox::MBOX;
 use bcm2837::uart0::UART0;
 use core::fmt::Write;
-use display::Display;
+use display::{Display, ObjectDrawing};
 use embedded_graphics::coord::Coord;
-use embedded_graphics::prelude::*;
 use mailbox::msg::framebuffer::FramebufferCmd;
 use mailbox::Mailbox;
 use rgb::RGB8;
@@ -87,11 +86,8 @@ fn kernel_entry() -> ! {
         */
 
         bar_graph.set_value(0.90);
-        //bar_graph.test_draw(&mut display);
 
-        //display.draw(bar_graph.test_obj());
-
-        display.draw(bar_graph.into_iter());
+        bar_graph.draw_object(&mut display);
 
         loop {}
     }
