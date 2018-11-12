@@ -44,6 +44,10 @@ impl CircleDigit {
         write!(self.value_str, "{}", self.value).ok();
     }
 
+    pub fn set_center(&mut self, coord: Coord) {
+        self.config.center = coord;
+    }
+
     fn draw_circle(&self, display: &mut Display) {
         let mut circle: Circle<DisplayColor> = Circle::new(self.config.center, self.config.radius)
             .with_stroke(Some(self.config.stroke_color.into()))

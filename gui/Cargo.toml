@@ -8,3 +8,4 @@ edition = "2015"
 display = { path = "../display" }
 embedded-graphics = "0.4"
 rgb = "0.8"
+heapless = "0.4"

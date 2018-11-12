@@ -1,11 +1,12 @@
 #![no_std]
 
+extern crate display;
 extern crate embedded_graphics;
+extern crate heapless;
 extern crate rgb;
 
-use embedded_graphics::drawable::Pixel;
-use embedded_graphics::pixelcolor::PixelColor;
-use embedded_graphics::Drawing;
-use rgb::RGB8;
+mod bar_graph;
+mod circle_digit;
 
-// TODO
+pub use self::bar_graph::{BarGraph, Config as BarGraphConfig};
+pub use self::circle_digit::{CircleDigit, Config as CircleDigitConfig};

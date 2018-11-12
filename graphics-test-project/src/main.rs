@@ -6,14 +6,13 @@ extern crate bcm2837;
 extern crate cortex_a;
 extern crate display;
 extern crate embedded_graphics;
-extern crate heapless;
+extern crate gui;
 extern crate mailbox;
 extern crate rgb;
 
 #[macro_use]
 extern crate raspi3_boot;
 
-mod graphics;
 mod panic_handler;
 mod serial;
 
@@ -26,8 +25,7 @@ use mailbox::msg::framebuffer::FramebufferCmd;
 use mailbox::Mailbox;
 use rgb::RGB8;
 
-use graphics::bar_graph::{BarGraph, Config as BarGraphConfig};
-use graphics::circle_digit::{CircleDigit, Config as CircleDigitConfig};
+use gui::{BarGraph, BarGraphConfig, CircleDigit, CircleDigitConfig};
 use serial::Serial;
 
 entry!(kernel_entry);
