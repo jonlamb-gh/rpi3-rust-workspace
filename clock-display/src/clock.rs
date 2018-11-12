@@ -5,7 +5,7 @@ use core::f32;
 use display::{Display, ObjectDrawing};
 use embedded_graphics::coord::Coord;
 use embedded_graphics::prelude::*;
-use embedded_graphics::primitives::Circle;
+use embedded_graphics::primitives::{Circle, Line};
 use gui::{CircleDigit, CircleDigitConfig};
 use rgb::RGB8;
 
@@ -63,7 +63,7 @@ impl Clock {
         };
 
         // TODO
-        clock.update_digits(7, 15, 60);
+        clock.update_digits(7, 15, 59);
 
         clock
     }
@@ -75,7 +75,7 @@ impl Clock {
     }
 
     fn update_second_digit(&mut self, digit: u32) {
-        assert!(digit <= 60);
+        assert!(digit < 60);
         let radius = self.config.radius
             - self.sec_cd.config().radius
             - self.sec_cd.config().stroke_width as u32
@@ -87,7 +87,7 @@ impl Clock {
     }
 
     fn update_minute_digit(&mut self, digit: u32) {
-        assert!(digit <= 60);
+        assert!(digit < 60);
         let radius = self.config.radius
             - self.min_cd.config().radius
             - self.min_cd.config().stroke_width as u32
@@ -111,14 +111,35 @@ impl Clock {
     }
 
     fn draw_second_digit(&self, display: &mut Display) {
+        display.draw(
+            Line::new(self.config.center, self.sec_cd.config().center)
+                .with_stroke(Some(self.sec_cd.config().background_fill_color.into()))
+                .with_stroke_width(1)
+                .into_iter(),
+        );
+
         self.sec_cd.draw_object(display);
     }
 
     fn draw_minute_digit(&self, display: &mut Display) {
+        display.draw(
+            Line::new(self.config.center, self.min_cd.config().center)
+                .with_stroke(Some(self.min_cd.config().background_fill_color.into()))
+                .with_stroke_width(1)
+                .into_iter(),
+        );
+
         self.min_cd.draw_object(display);
     }
 
     fn draw_hour_digit(&self, display: &mut Display) {
+        display.draw(
+            Line::new(self.config.center, self.hour_cd.config().center)
+                .with_stroke(Some(self.hour_cd.config().background_fill_color.into()))
+                .with_stroke_width(1)
+                .into_iter(),
+        );
+
         self.hour_cd.draw_object(display);
     }
 
