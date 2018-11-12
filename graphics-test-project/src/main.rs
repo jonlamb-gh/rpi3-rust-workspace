@@ -27,6 +27,7 @@ use mailbox::Mailbox;
 use rgb::RGB8;
 
 use graphics::bar_graph::{BarGraph, Config as BarGraphConfig};
+use graphics::circle_digit::{CircleDigit, Config as CircleDigitConfig};
 use serial::Serial;
 
 entry!(kernel_entry);
@@ -70,6 +71,16 @@ fn kernel_entry() -> ! {
 
     let mut bar_graph = BarGraph::new(bar_graph_config);
 
+    let mut circle_digit = CircleDigit::new(CircleDigitConfig {
+        center: Coord::new(300, 200),
+        radius: 30,
+        fill: true,
+        text_color: RGB8::new(0xFF, 0xFF, 0xFF),
+        background_fill_color: RGB8::new(0xAF, 0xAF, 0x00),
+        stroke_color: RGB8::new(0xFF, 0xFF, 0xFF),
+        stroke_width: 2,
+    });
+
     loop {
         display.clear_screen(&mut mbox);
 
@@ -86,8 +97,10 @@ fn kernel_entry() -> ! {
         */
 
         bar_graph.set_value(0.90);
-
         bar_graph.draw_object(&mut display);
+
+        circle_digit.set_value(4);
+        circle_digit.draw_object(&mut display);
 
         loop {}
     }

@@ -32,14 +32,12 @@ pub struct BarGraph {
     config: Config,
     value_str: String<U32>,
     value: f32,
-    width: i32,
     height: i32,
     center_x: i32,
-    center_y: i32,
     fill_dist: i32,
 }
 
-const TEXT_V_PADDING: i32 = 3;
+const TEXT_VERT_PADDING: i32 = 3;
 
 impl BarGraph {
     pub fn new(config: Config) -> Self {
@@ -47,16 +45,13 @@ impl BarGraph {
         let width: i32 = config.bottom_right.abs().0 - config.top_left.abs().0;
         let height: i32 = config.bottom_right.abs().1 - config.top_left.abs().1;
         let center_x: i32 = config.top_left.0 + (width / 2);
-        let center_y: i32 = config.top_left.1 + (height / 2);
 
         Self {
             config,
             value_str: String::new(),
             value: 0.0,
-            width,
             height,
             center_x,
-            center_y,
             fill_dist: 0,
         }
     }
@@ -122,7 +117,7 @@ impl BarGraph {
         let text: Font12x16<DisplayColor> =
             Font12x16::render_str(&self.value_str).with_stroke(Some(self.config.text_color.into()));
 
-        let room_needed = self.height - (text.dimensions().1 as i32) - (4 * TEXT_V_PADDING);
+        let room_needed = self.height - (text.dimensions().1 as i32) - (4 * TEXT_VERT_PADDING);
         let room_above = if self.fill_dist <= room_needed {
             true
         } else {
@@ -137,7 +132,7 @@ impl BarGraph {
                     self.config.bottom_right.1
                         - self.fill_dist
                         - (text.dimensions().1 as i32)
-                        - TEXT_V_PADDING,
+                        - TEXT_VERT_PADDING,
                 ),
                 self.config.background_color,
             )
@@ -146,7 +141,7 @@ impl BarGraph {
             (
                 Coord::new(
                     self.center_x - (text.dimensions().0 as i32 / 2),
-                    self.config.bottom_right.1 - self.fill_dist + TEXT_V_PADDING,
+                    self.config.bottom_right.1 - self.fill_dist + TEXT_VERT_PADDING,
                 ),
                 self.config.fill_color,
             )
