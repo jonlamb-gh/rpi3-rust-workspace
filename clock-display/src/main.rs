@@ -60,8 +60,8 @@ fn kernel_entry() -> ! {
 
     let clock = Clock::new(ClockConfig {
         center: Coord::new(display.width() as i32 / 2, display.height() as i32 / 2),
-        radius: display.height() / 2,
-        outline_stroke_width: 2,
+        radius: (display.height() / 2) - 1,
+        outline_stroke_width: 4,
         outline_color: RGB8::new(0xFF, 0xFF, 0xFF),
         /*
         sec_cd_config: CircleDigitConfig {

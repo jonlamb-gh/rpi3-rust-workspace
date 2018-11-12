@@ -11,6 +11,8 @@ use rgb::RGB8;
 
 //const DEGREE_PER_TICK: u32 = 6;
 const TICK_PER_SECOND: u32 = 1;
+const TICK_PER_MINUTE: u32 = 1;
+const TICK_PER_HOUR: u32 = 5;
 
 #[derive(Debug, Copy, Clone)]
 pub struct Config {
@@ -23,6 +25,8 @@ pub struct Config {
 pub struct Clock {
     config: Config,
     sec_cd: CircleDigit,
+    min_cd: CircleDigit,
+    hour_cd: CircleDigit,
 }
 
 impl Clock {
@@ -30,7 +34,7 @@ impl Clock {
         let mut clock = Self {
             config,
             sec_cd: CircleDigit::new(CircleDigitConfig {
-                center: Coord::new(300, 200),
+                center: Coord::new(0, 0),
                 radius: 20,
                 fill: true,
                 text_color: RGB8::new(0xFF, 0xFF, 0xFF),
@@ -38,15 +42,35 @@ impl Clock {
                 stroke_color: RGB8::new(0xFF, 0xFF, 0xFF),
                 stroke_width: 2,
             }),
+            min_cd: CircleDigit::new(CircleDigitConfig {
+                center: Coord::new(0, 0),
+                radius: 20,
+                fill: true,
+                text_color: RGB8::new(0xFF, 0xFF, 0xFF),
+                background_fill_color: RGB8::new(0x1B, 0xF0, 0xB0),
+                stroke_color: RGB8::new(0xFF, 0xFF, 0xFF),
+                stroke_width: 2,
+            }),
+            hour_cd: CircleDigit::new(CircleDigitConfig {
+                center: Coord::new(0, 0),
+                radius: 20,
+                fill: true,
+                text_color: RGB8::new(0xFF, 0xFF, 0xFF),
+                background_fill_color: RGB8::new(0x1F, 0xAF, 0x0F),
+                stroke_color: RGB8::new(0xFF, 0xFF, 0xFF),
+                stroke_width: 2,
+            }),
         };
 
         // TODO
-        clock.update_digits(60);
+        clock.update_digits(7, 15, 60);
 
         clock
     }
 
-    fn update_digits(&mut self, sec: u32) {
+    fn update_digits(&mut self, hour: u32, min: u32, sec: u32) {
+        self.update_hour_digit(hour);
+        self.update_minute_digit(min);
         self.update_second_digit(sec);
     }
 
@@ -55,14 +79,47 @@ impl Clock {
         let radius = self.config.radius
             - self.sec_cd.config().radius
             - self.sec_cd.config().stroke_width as u32
+            - self.config.outline_stroke_width as u32
             - 1;
         let center = self.radial_coord(radius, digit * TICK_PER_SECOND);
         self.sec_cd.set_center(center);
         self.sec_cd.set_value(digit);
     }
 
+    fn update_minute_digit(&mut self, digit: u32) {
+        assert!(digit <= 60);
+        let radius = self.config.radius
+            - self.min_cd.config().radius
+            - self.min_cd.config().stroke_width as u32
+            - self.config.outline_stroke_width as u32
+            - 1;
+        let center = self.radial_coord(radius, digit * TICK_PER_MINUTE);
+        self.min_cd.set_center(center);
+        self.min_cd.set_value(digit);
+    }
+
+    fn update_hour_digit(&mut self, digit: u32) {
+        assert!(digit <= 12);
+        let radius = self.config.radius
+            - self.hour_cd.config().radius
+            - self.hour_cd.config().stroke_width as u32
+            - self.config.outline_stroke_width as u32
+            - 1;
+        let center = self.radial_coord(radius, digit * TICK_PER_HOUR);
+        self.hour_cd.set_center(center);
+        self.hour_cd.set_value(digit);
+    }
+
     fn draw_second_digit(&self, display: &mut Display) {
         self.sec_cd.draw_object(display);
+    }
+
+    fn draw_minute_digit(&self, display: &mut Display) {
+        self.min_cd.draw_object(display);
+    }
+
+    fn draw_hour_digit(&self, display: &mut Display) {
+        self.hour_cd.draw_object(display);
     }
 
     fn draw_outline_circles(&self, display: &mut Display) {
@@ -91,14 +148,16 @@ impl ObjectDrawing for Clock {
     fn draw_object(&self, display: &mut Display) {
         // draw back to front
         self.draw_outline_circles(display);
+        self.draw_hour_digit(display);
+        self.draw_minute_digit(display);
         self.draw_second_digit(display);
     }
 }
 
 // TODO - enable float to get sin/cos/etc
+// this will be removed
 // 60 is provided for convenience, returns same as 0
 fn rad_tick_to_cart(tick_num: u32) -> (f32, f32) {
-    assert!(tick_num <= 60);
     match tick_num {
         0 => (0_f32, 1_f32),
         1 => (0.104528464_f32, 0.9945219_f32),
@@ -161,6 +220,6 @@ fn rad_tick_to_cart(tick_num: u32) -> (f32, f32) {
         58 => (-0.20791176_f32, 0.97814757_f32),
         59 => (-0.10452865_f32, 0.99452186_f32),
         60 => (0_f32, 1_f32),
-        _ => panic!("Invalid tick_num"),
+        _ => panic!("Invalid tick_num {}", tick_num),
     }
 }
