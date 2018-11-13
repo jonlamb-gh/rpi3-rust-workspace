@@ -1,5 +1,6 @@
 // TODO
 // - use types around digit/sec/min/hour/etc
+// - chrono https://github.com/chronotope/chrono
 
 use core::f32;
 use display::{Display, ObjectDrawing};
