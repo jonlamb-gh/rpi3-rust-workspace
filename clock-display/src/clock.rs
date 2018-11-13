@@ -35,7 +35,7 @@ impl Clock {
             config,
             sec_cd: CircleDigit::new(CircleDigitConfig {
                 center: Coord::new(0, 0),
-                radius: 20,
+                radius: 18,
                 fill: true,
                 text_color: RGB8::new(0xFF, 0xFF, 0xFF),
                 background_fill_color: RGB8::new(0x0F, 0xAF, 0xF0),
@@ -44,7 +44,7 @@ impl Clock {
             }),
             min_cd: CircleDigit::new(CircleDigitConfig {
                 center: Coord::new(0, 0),
-                radius: 20,
+                radius: 22,
                 fill: true,
                 text_color: RGB8::new(0xFF, 0xFF, 0xFF),
                 background_fill_color: RGB8::new(0x1B, 0xF0, 0xB0),
@@ -53,7 +53,7 @@ impl Clock {
             }),
             hour_cd: CircleDigit::new(CircleDigitConfig {
                 center: Coord::new(0, 0),
-                radius: 20,
+                radius: 26,
                 fill: true,
                 text_color: RGB8::new(0xFF, 0xFF, 0xFF),
                 background_fill_color: RGB8::new(0x1F, 0xAF, 0x0F),
