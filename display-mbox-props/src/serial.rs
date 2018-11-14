@@ -88,6 +88,9 @@ impl Serial {
 impl ::core::fmt::Write for Serial {
     fn write_str(&mut self, s: &str) -> ::core::fmt::Result {
         for &b in s.as_bytes() {
+            if b == '\n' as _ {
+                self.send('\r' as _);
+            }
             self.send(b as _);
         }
         Ok(())
