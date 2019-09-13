@@ -3,12 +3,5 @@
 members = [
     "raspi3_boot",
     "bcm2837",
-    "mailbox",
-    "display",
-    "gui",
-    "fb-test-project",
-    "eg-test-project",
-    "display-mbox-props",
-    "clock-display",
-    "graphics-test-project",
+    "bcm2837-hal",
 ]

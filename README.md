@@ -1,5 +1,12 @@
 # rpi3-rust-workspace
+
 Rust workspace for RPI3 bare metal things
+
+## Building
+
+```rust
+cargo xbuild 
+```
 
 ## Links
 
@@ -12,3 +19,4 @@ Rust workspace for RPI3 bare metal things
 - https://github.com/BrianSidebotham/arm-tutorial-rpi/tree/master/part-5
 - https://docs.sel4.systems/Hardware/Rpi3.html
 - https://a-delacruz.github.io/ubuntu/rpi3-setup-64bit-uboot.html
+- https://github.com/hermanhermitage/videocoreiv/wiki/VideoCore-IV-Programmers-Manual

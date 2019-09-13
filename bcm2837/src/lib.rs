@@ -1,10 +1,11 @@
 #![no_std]
 
-#[macro_use]
-extern crate register;
-
 const MMIO_BASE: u32 = 0x3F00_0000;
 
+pub mod dma;
 pub mod gpio;
 pub mod mbox;
-pub mod uart0;
+pub mod rng;
+pub mod spi0;
+pub mod sys_timer;
+pub mod uart1;
