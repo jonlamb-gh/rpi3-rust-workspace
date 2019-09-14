@@ -8,4 +8,5 @@ pub mod mbox;
 pub mod rng;
 pub mod spi0;
 pub mod sys_timer;
+pub mod uart0;
 pub mod uart1;

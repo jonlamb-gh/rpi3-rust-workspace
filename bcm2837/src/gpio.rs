@@ -1,6 +1,7 @@
 //! GPIO
 
 use crate::MMIO_BASE;
+use core::marker::PhantomData;
 use core::ops::{Deref, DerefMut};
 use register::{mmio::ReadWrite, register_bitfields};
 
@@ -223,27 +224,24 @@ pub struct RegisterBlock {
 }
 
 pub struct GPIO {
-    addr: *const u32,
-}
-
-impl From<u32> for GPIO {
-    fn from(addr: u32) -> GPIO {
-        assert_ne!(addr, 0);
-        GPIO {
-            addr: addr as *const u32,
-        }
-    }
+    _marker: PhantomData<*const ()>,
 }
 
 unsafe impl Send for GPIO {}
 
 impl GPIO {
+    pub fn new() -> Self {
+        Self {
+            _marker: PhantomData,
+        }
+    }
+
     pub fn as_ptr(&self) -> *const RegisterBlock {
-        self.addr as *const _
+        PADDR as *const _
     }
 
     pub fn as_mut_ptr(&mut self) -> *mut RegisterBlock {
-        self.addr as *mut _
+        PADDR as *mut _
     }
 }
 

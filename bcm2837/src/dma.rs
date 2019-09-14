@@ -1,6 +1,7 @@
 //! DMA
 
 use crate::MMIO_BASE;
+use core::marker::PhantomData;
 use core::ops::{Deref, DerefMut};
 use register::{mmio::ReadOnly, mmio::ReadWrite, register_bitfields};
 
@@ -9,10 +10,13 @@ pub const PADDR: u32 = MMIO_BASE + 0x0000_7000;
 
 /// Offset of the global interrupt status register
 pub const INT_STATUS_OFFSET: u32 = 0xFE0;
+pub const INT_STATUS_PADDR: u32 = PADDR + INT_STATUS_OFFSET;
 
 /// Offset of the global enable control register
 pub const ENABLE_OFFSET: u32 = 0xFF0;
+pub const ENABLE_PADDR: u32 = PADDR + ENABLE_OFFSET;
 
+// TODO - make this an enum
 pub const CHANNEL0_OFFSET: u32 = 0x000;
 pub const CHANNEL1_OFFSET: u32 = 0x100;
 pub const CHANNEL2_OFFSET: u32 = 0x200;
@@ -161,27 +165,32 @@ pub struct RegisterBlock {
 }
 
 pub struct DMA {
-    addr: *const u32,
-}
-
-impl From<u32> for DMA {
-    fn from(addr: u32) -> DMA {
-        assert_ne!(addr, 0);
-        DMA {
-            addr: addr as *const u32,
-        }
-    }
+    // Starts at PADDR (channel 0)
+    paddr: *const u32,
 }
 
 unsafe impl Send for DMA {}
 
 impl DMA {
+    pub fn new() -> Self {
+        Self {
+            paddr: PADDR as *const _,
+        }
+    }
+
+    // TODO - use above enum instead of offset
+    pub fn as_channel(self, offset: u32) -> Self {
+        Self {
+            paddr: (PADDR + offset) as *const _,
+        }
+    }
+
     pub fn as_ptr(&self) -> *const RegisterBlock {
-        self.addr as *const _
+        self.paddr as *const _
     }
 
     pub fn as_mut_ptr(&mut self) -> *mut RegisterBlock {
-        self.addr as *mut _
+        self.paddr as *mut _
     }
 }
 
@@ -199,27 +208,24 @@ impl DerefMut for DMA {
 }
 
 pub struct IntStatusRegister {
-    addr: *const u32,
-}
-
-impl From<u32> for IntStatusRegister {
-    fn from(addr: u32) -> IntStatusRegister {
-        assert_ne!(addr, 0);
-        IntStatusRegister {
-            addr: addr as *const u32,
-        }
-    }
+    _marker: PhantomData<*const ()>,
 }
 
 unsafe impl Send for IntStatusRegister {}
 
 impl IntStatusRegister {
+    pub fn new() -> Self {
+        Self {
+            _marker: PhantomData,
+        }
+    }
+
     pub fn as_ptr(&self) -> *const GlobalIntStatusRegisterBlock {
-        self.addr as *const _
+        INT_STATUS_PADDR as *const _
     }
 
     pub fn as_mut_ptr(&mut self) -> *mut GlobalIntStatusRegisterBlock {
-        self.addr as *mut _
+        INT_STATUS_PADDR as *mut _
     }
 }
 
@@ -237,27 +243,24 @@ impl DerefMut for IntStatusRegister {
 }
 
 pub struct EnableRegister {
-    addr: *const u32,
-}
-
-impl From<u32> for EnableRegister {
-    fn from(addr: u32) -> EnableRegister {
-        assert_ne!(addr, 0);
-        EnableRegister {
-            addr: addr as *const u32,
-        }
-    }
+    _marker: PhantomData<*const ()>,
 }
 
 unsafe impl Send for EnableRegister {}
 
 impl EnableRegister {
+    pub fn new() -> Self {
+        Self {
+            _marker: PhantomData,
+        }
+    }
+
     pub fn as_ptr(&self) -> *const GlobalEnableRegisterBlock {
-        self.addr as *const _
+        ENABLE_PADDR as *const _
     }
 
     pub fn as_mut_ptr(&mut self) -> *mut GlobalEnableRegisterBlock {
-        self.addr as *mut _
+        ENABLE_PADDR as *mut _
     }
 }
 

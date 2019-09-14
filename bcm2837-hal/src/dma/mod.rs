@@ -38,17 +38,15 @@ impl DmaExt for DMA {
     type Parts = Parts;
 
     fn split(self) -> Parts {
-        let base_addr = self.as_ptr() as u32;
-
         Parts {
             ch0: Channel {
-                dma: DMA::from(base_addr + CHANNEL0_OFFSET),
+                dma: DMA::new().as_channel(CHANNEL0_OFFSET),
             },
             ch1: Channel {
-                dma: DMA::from(base_addr + CHANNEL1_OFFSET),
+                dma: DMA::new().as_channel(CHANNEL1_OFFSET),
             },
-            int_status: IntStatusRegister::from(base_addr + INT_STATUS_OFFSET),
-            enable: EnableRegister::from(base_addr + ENABLE_OFFSET),
+            int_status: IntStatusRegister::new(),
+            enable: EnableRegister::new(),
         }
     }
 }

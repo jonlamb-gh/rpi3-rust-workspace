@@ -60,18 +60,18 @@ impl TimerExt for SysTimer {
     type Parts = Parts;
 
     fn split(self) -> Self::Parts {
-        // Each timer/counter gets a copy of the base SysTimer vaddr
+        // Each timer/counter gets a copy of the base SysTimer paddr/device
         Parts {
             sys_counter: SysCounter {
-                timer: SysTimer::from(self.as_ptr() as u32),
+                timer: SysTimer::new(),
             },
             timer1: Timer {
-                timer: SysTimer::from(self.as_ptr() as u32),
+                timer: SysTimer::new(),
                 channel: Channel::C1,
                 ticks: 0,
             },
             timer3: Timer {
-                timer: SysTimer::from(self.as_ptr() as u32),
+                timer: SysTimer::new(),
                 channel: Channel::C3,
                 ticks: 0,
             },

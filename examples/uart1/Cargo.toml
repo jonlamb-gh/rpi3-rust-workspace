@@ -1,0 +1,15 @@
+[package]
+name = "uart1"
+version = "0.1.0"
+authors = ["Jon Lamb"]
+edition = "2018"
+
+[dependencies]
+bcm2837-hal = { path = "../../bcm2837-hal" }
+
+[dependencies.embedded-hal]
+features = ["unproven"]
+version = "0.2"
+
+[dependencies.raspi3_boot]
+path = "../../raspi3_boot"
