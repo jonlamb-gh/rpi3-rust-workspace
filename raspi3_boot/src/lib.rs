@@ -2,17 +2,18 @@
  * MIT License
  *
  * Copyright (c) 2018 Jorge Aparicio
- * Copyright (c) 2018-2019 Andre Richter <andre.o.richter@gmail.com>
+ * Copyright (c) 2018 Andre Richter <andre.o.richter@gmail.com>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to permit
+ * persons to whom the Software is furnished to do so, subject to the
+ * following conditions:
  *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -23,15 +24,15 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#![deny(missing_docs)]
 #![deny(warnings)]
 #![no_std]
+#![feature(global_asm)]
 
 //! Low-level boot of the Raspberry's processor
 
+#[cfg(feature = "panic-abort")]
 extern crate panic_abort;
 
-/// Type check the user-supplied entry function.
 #[macro_export]
 macro_rules! entry {
     ($path:path) => {
@@ -48,7 +49,8 @@ macro_rules! entry {
 /// Reset function.
 ///
 /// Initializes the bss section before calling into the user's `main()`.
-unsafe fn reset() -> ! {
+#[no_mangle]
+pub unsafe extern "C" fn reset() -> ! {
     extern "C" {
         // Boundaries of the .bss section, provided by the linker script
         static mut __bss_start: u64;
@@ -65,26 +67,5 @@ unsafe fn reset() -> ! {
     main();
 }
 
-/// Entrypoint of the processor.
-///
-/// Parks all cores except core0, and then jumps to the internal
-/// `reset()` function.
-#[link_section = ".text.boot"]
-#[no_mangle]
-pub unsafe extern "C" fn _boot_cores() -> ! {
-    use cortex_a::{asm, regs::*};
-
-    const CORE_0: u64 = 0;
-    const CORE_MASK: u64 = 0x3;
-    const STACK_START: u64 = 0x80_000;
-
-    if CORE_0 == MPIDR_EL1.get() & CORE_MASK {
-        SP.set(STACK_START);
-        reset()
-    } else {
-        // if not core0, infinitely wait for events
-        loop {
-            asm::wfe();
-        }
-    }
-}
+// Disable all cores except core 0, and then jump to reset()
+global_asm!(include_str!("boot_cores.S"));
