@@ -6,4 +6,5 @@ members = [
     "bcm2837-hal",
     "examples/uart1",
     "examples/mbox",
+    "examples/keypad",
 ]

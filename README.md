@@ -79,6 +79,7 @@ kernel=u-boot.bin
 
 ## Useful Links
 
+- https://github.com/raspberrypi/documentation/files/1888662/BCM2837-ARM-Peripherals.-.Revised.-.V2-1.pdf
 - https://github.com/hermanhermitage/videocoreiv
 - https://github.com/rust-embedded/rust-raspi3-tutorial
 - https://github.com/bztsrc/raspi3-tutorial

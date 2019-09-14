@@ -75,6 +75,30 @@ register_bitfields! {
 
     /// GPIO Function Select 1
     GPFSEL1 [
+        /// Pin 19
+        FSEL19 OFFSET(27) NUMBITS(3) [
+            Input = 0b000,
+            Output = 0b001,
+            AF0 = 0b100,
+            AF1 = 0b101,
+            AF2 = 0b110,
+            AF3 = 0b111,
+            AF4 = 0b011,
+            AF5 = 0b010
+        ],
+
+        /// Pin 17
+        FSEL17 OFFSET(21) NUMBITS(3) [
+            Input = 0b000,
+            Output = 0b001,
+            AF0 = 0b100,
+            AF1 = 0b101,
+            AF2 = 0b110,
+            AF3 = 0b111,
+            AF4 = 0b011,
+            AF5 = 0b010
+        ],
+
         /// Pin 15
         FSEL15 OFFSET(15) NUMBITS(3) [
             Input = 0b000,
@@ -97,6 +121,18 @@ register_bitfields! {
             AF3 = 0b111,
             AF4 = 0b011,
             AF5 = 0b010 // Mini UART - Alternate function 5
+        ],
+
+        /// Pin 13
+        FSEL13 OFFSET(9) NUMBITS(3) [
+            Input = 0b000,
+            Output = 0b001,
+            AF0 = 0b100,
+            AF1 = 0b101,
+            AF2 = 0b110,
+            AF3 = 0b111,
+            AF4 = 0b011,
+            AF5 = 0b010
         ],
 
         /// Pin 11
@@ -124,6 +160,45 @@ register_bitfields! {
         ]
     ],
 
+    /// GPIO Function Select 2
+    GPFSEL2 [
+        /// Pin 27
+        FSEL27 OFFSET(21) NUMBITS(3) [
+            Input = 0b000,
+            Output = 0b001,
+            AF0 = 0b100,
+            AF1 = 0b101,
+            AF2 = 0b110,
+            AF3 = 0b111,
+            AF4 = 0b011,
+            AF5 = 0b010
+        ],
+
+        /// Pin 22
+        FSEL22 OFFSET(6) NUMBITS(3) [
+            Input = 0b000,
+            Output = 0b001,
+            AF0 = 0b100,
+            AF1 = 0b101,
+            AF2 = 0b110,
+            AF3 = 0b111,
+            AF4 = 0b011,
+            AF5 = 0b010
+        ],
+
+        /// Pin 20
+        FSEL20 OFFSET(0) NUMBITS(3) [
+            Input = 0b000,
+            Output = 0b001,
+            AF0 = 0b100,
+            AF1 = 0b101,
+            AF2 = 0b110,
+            AF3 = 0b111,
+            AF4 = 0b011,
+            AF5 = 0b010
+        ]
+    ],
+
     /// GPIO Pull-up/down Register
     GPPUD [
         /// GPIO Pin Pull-up/down
@@ -136,6 +211,42 @@ register_bitfields! {
 
     /// GPIO Pull-up/down Clock Register 0
     GPPUDCLK0 [
+        /// Pin 27
+        PUDCLK27 OFFSET(27) NUMBITS(1) [
+            NoEffect = 0,
+            AssertClock = 1
+        ],
+
+        /// Pin 22
+        PUDCLK22 OFFSET(22) NUMBITS(1) [
+            NoEffect = 0,
+            AssertClock = 1
+        ],
+
+        /// Pin 20
+        PUDCLK20 OFFSET(20) NUMBITS(1) [
+            NoEffect = 0,
+            AssertClock = 1
+        ],
+
+        /// Pin 19
+        PUDCLK19 OFFSET(19) NUMBITS(1) [
+            NoEffect = 0,
+            AssertClock = 1
+        ],
+
+        /// Pin 18
+        PUDCLK18 OFFSET(18) NUMBITS(1) [
+            NoEffect = 0,
+            AssertClock = 1
+        ],
+
+        /// Pin 17
+        PUDCLK17 OFFSET(17) NUMBITS(1) [
+            NoEffect = 0,
+            AssertClock = 1
+        ],
+
         /// Pin 15
         PUDCLK15 OFFSET(15) NUMBITS(1) [
             NoEffect = 0,
@@ -209,7 +320,8 @@ register_bitfields! {
 pub struct RegisterBlock {
     pub GPFSEL0: ReadWrite<u32, GPFSEL0::Register>, // 0x00
     pub GPFSEL1: ReadWrite<u32, GPFSEL1::Register>, // 0x04
-    __reserved_0: [u32; 5],                         // 0x08
+    pub GPFSEL2: ReadWrite<u32, GPFSEL2::Register>, // 0x08
+    __reserved_0: [u32; 4],                         // 0x0C
     pub GPSET0: ReadWrite<u32>,                     // 0x1C
     pub GPSET1: ReadWrite<u32>,                     // 0x20
     __reserved_1: u32,                              // 0x24

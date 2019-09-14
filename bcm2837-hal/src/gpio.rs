@@ -61,59 +61,96 @@ pub struct Parts {
     pub p9: Pin9<Input<Floating>>,
     pub p10: Pin10<Input<Floating>>,
     pub p11: Pin11<Input<Floating>>,
+    pub p13: Pin13<Input<Floating>>,
     pub p14: Pin14<Input<Floating>>,
     pub p15: Pin15<Input<Floating>>,
+    pub p17: Pin17<Input<Floating>>,
+    pub p19: Pin19<Input<Floating>>,
+    pub p20: Pin20<Input<Floating>>,
+    pub p22: Pin22<Input<Floating>>,
+    pub p27: Pin27<Input<Floating>>,
 }
 
+// TODO - clean this up
 impl GpioExt for GPIO {
     type Parts = Parts;
 
     fn split(self) -> Parts {
-        // Each pin gets a copy of the GPIO vaddr
+        // Each pin gets a copy of the GPIO paddr
         Parts {
             p5: Pin5 {
-                pin: 0,
-                addr: self.as_ptr() as _,
+                pin: 5,
+                gpio: GPIO::new(),
                 _mode: PhantomData,
             },
             p6: Pin6 {
-                pin: 0,
-                addr: self.as_ptr() as _,
+                pin: 6,
+                gpio: GPIO::new(),
                 _mode: PhantomData,
             },
             p7: Pin7 {
-                pin: 0,
-                addr: self.as_ptr() as _,
+                pin: 7,
+                gpio: GPIO::new(),
                 _mode: PhantomData,
             },
             p8: Pin8 {
-                pin: 0,
-                addr: self.as_ptr() as _,
+                pin: 8,
+                gpio: GPIO::new(),
                 _mode: PhantomData,
             },
             p9: Pin9 {
-                pin: 0,
-                addr: self.as_ptr() as _,
+                pin: 9,
+                gpio: GPIO::new(),
                 _mode: PhantomData,
             },
             p10: Pin10 {
-                pin: 0,
-                addr: self.as_ptr() as _,
+                pin: 10,
+                gpio: GPIO::new(),
                 _mode: PhantomData,
             },
             p11: Pin11 {
-                pin: 0,
-                addr: self.as_ptr() as _,
+                pin: 11,
+                gpio: GPIO::new(),
+                _mode: PhantomData,
+            },
+            p13: Pin13 {
+                pin: 13,
+                gpio: GPIO::new(),
                 _mode: PhantomData,
             },
             p14: Pin14 {
-                pin: 0,
-                addr: self.as_ptr() as _,
+                pin: 14,
+                gpio: GPIO::new(),
                 _mode: PhantomData,
             },
             p15: Pin15 {
-                pin: 0,
-                addr: self.as_ptr() as _,
+                pin: 15,
+                gpio: GPIO::new(),
+                _mode: PhantomData,
+            },
+            p17: Pin17 {
+                pin: 17,
+                gpio: GPIO::new(),
+                _mode: PhantomData,
+            },
+            p19: Pin19 {
+                pin: 19,
+                gpio: GPIO::new(),
+                _mode: PhantomData,
+            },
+            p20: Pin20 {
+                pin: 20,
+                gpio: GPIO::new(),
+                _mode: PhantomData,
+            },
+            p22: Pin22 {
+                pin: 22,
+                gpio: GPIO::new(),
+                _mode: PhantomData,
+            },
+            p27: Pin27 {
+                pin: 27,
+                gpio: GPIO::new(),
                 _mode: PhantomData,
             },
         }
@@ -130,14 +167,14 @@ macro_rules! gpio {
 $(
 pub struct $PXi<MODE> {
     pin: u32,
-    addr: *const u64,
+    gpio: GPIO,
     _mode: PhantomData<MODE>,
 }
 
 impl<MODE> Deref for $PXi<MODE> {
     type Target = RegisterBlock;
     fn deref(&self) -> &Self::Target {
-        unsafe { &*(self.addr as *const RegisterBlock) }
+        &self.gpio
     }
 }
 
@@ -154,7 +191,7 @@ impl<MODE> $PXi<MODE> {
         for _ in 0..WAIT_CYCLES { asm::nop(); }
         self.$GPPUDCLKx.set(0);
 
-        $PXi { pin: self.pin, addr: self.addr, _mode: PhantomData }
+        $PXi { pin: self.pin, gpio: self.gpio, _mode: PhantomData }
     }
 
     /// Configures the pin to operate in AF1 mode
@@ -169,7 +206,7 @@ impl<MODE> $PXi<MODE> {
         for _ in 0..WAIT_CYCLES { asm::nop(); }
         self.$GPPUDCLKx.set(0);
 
-        $PXi { pin: self.pin, addr: self.addr, _mode: PhantomData }
+        $PXi { pin: self.pin, gpio: self.gpio, _mode: PhantomData }
     }
 
     /// Configures the pin to operate in AF2 mode
@@ -184,7 +221,7 @@ impl<MODE> $PXi<MODE> {
         for _ in 0..WAIT_CYCLES { asm::nop(); }
         self.$GPPUDCLKx.set(0);
 
-        $PXi { pin: self.pin, addr: self.addr, _mode: PhantomData }
+        $PXi { pin: self.pin, gpio: self.gpio, _mode: PhantomData }
     }
 
     /// Configures the pin to operate in AF3 mode
@@ -199,7 +236,7 @@ impl<MODE> $PXi<MODE> {
         for _ in 0..WAIT_CYCLES { asm::nop(); }
         self.$GPPUDCLKx.set(0);
 
-        $PXi { pin: self.pin, addr: self.addr, _mode: PhantomData }
+        $PXi { pin: self.pin, gpio: self.gpio, _mode: PhantomData }
     }
 
     /// Configures the pin to operate in AF4 mode
@@ -214,7 +251,7 @@ impl<MODE> $PXi<MODE> {
         for _ in 0..WAIT_CYCLES { asm::nop(); }
         self.$GPPUDCLKx.set(0);
 
-        $PXi { pin: self.pin, addr: self.addr, _mode: PhantomData }
+        $PXi { pin: self.pin, gpio: self.gpio, _mode: PhantomData }
     }
 
     /// Configures the pin to operate in AF5 mode
@@ -229,7 +266,7 @@ impl<MODE> $PXi<MODE> {
         for _ in 0..WAIT_CYCLES { asm::nop(); }
         self.$GPPUDCLKx.set(0);
 
-        $PXi { pin: self.pin, addr: self.addr, _mode: PhantomData }
+        $PXi { pin: self.pin, gpio: self.gpio, _mode: PhantomData }
     }
 
     /// Configures the pin to operate as a floating input pin
@@ -244,7 +281,7 @@ impl<MODE> $PXi<MODE> {
         for _ in 0..WAIT_CYCLES { asm::nop(); }
         self.$GPPUDCLKx.set(0);
 
-        $PXi { pin: self.pin, addr: self.addr, _mode: PhantomData }
+        $PXi { pin: self.pin, gpio: self.gpio, _mode: PhantomData }
     }
 
     /// Configures the pin to operate as a pulled down input pin
@@ -259,7 +296,7 @@ impl<MODE> $PXi<MODE> {
         for _ in 0..WAIT_CYCLES { asm::nop(); }
         self.$GPPUDCLKx.set(0);
 
-        $PXi { pin: self.pin, addr: self.addr, _mode: PhantomData }
+        $PXi { pin: self.pin, gpio: self.gpio, _mode: PhantomData }
     }
 
     /// Configures the pin to operate as a pulled up input pin
@@ -274,7 +311,7 @@ impl<MODE> $PXi<MODE> {
         for _ in 0..WAIT_CYCLES { asm::nop(); }
         self.$GPPUDCLKx.set(0);
 
-        $PXi { pin: self.pin, addr: self.addr, _mode: PhantomData }
+        $PXi { pin: self.pin, gpio: self.gpio, _mode: PhantomData }
     }
 
     /// Configures the pin to operate as an push pull output pin
@@ -289,7 +326,7 @@ impl<MODE> $PXi<MODE> {
         for _ in 0..WAIT_CYCLES { asm::nop(); }
         self.$GPPUDCLKx.set(0);
 
-        $PXi { pin: self.pin, addr: self.addr, _mode: PhantomData }
+        $PXi { pin: self.pin, gpio: self.gpio, _mode: PhantomData }
     }
 }
 
@@ -354,7 +391,23 @@ gpio!(
     [
         Pin10: (p10, FSEL10, PUDCLK10, Input<Floating>),
         Pin11: (p11, FSEL11, PUDCLK11, Input<Floating>),
+        Pin13: (p13, FSEL13, PUDCLK13, Input<Floating>),
         Pin14: (p14, FSEL14, PUDCLK14, Input<Floating>),
         Pin15: (p15, FSEL15, PUDCLK15, Input<Floating>),
+        Pin17: (p17, FSEL17, PUDCLK17, Input<Floating>),
+        Pin19: (p19, FSEL19, PUDCLK19, Input<Floating>),
+    ]
+);
+
+gpio!(
+    GPFSEL2,
+    GPPUDCLK0,
+    GPLEV0,
+    GPSET0,
+    GPCLR0,
+    [
+        Pin20: (p20, FSEL20, PUDCLK20, Input<Floating>),
+        Pin22: (p22, FSEL22, PUDCLK22, Input<Floating>),
+        Pin27: (p27, FSEL27, PUDCLK27, Input<Floating>),
     ]
 );
