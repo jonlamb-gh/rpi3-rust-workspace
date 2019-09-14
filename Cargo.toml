@@ -5,4 +5,5 @@ members = [
     "bcm2837",
     "bcm2837-hal",
     "examples/uart1",
+    "examples/mbox",
 ]

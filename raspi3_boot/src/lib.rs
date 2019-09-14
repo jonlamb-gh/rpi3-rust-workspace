@@ -27,11 +27,18 @@
 #![deny(warnings)]
 #![no_std]
 #![feature(global_asm)]
+#![cfg_attr(feature = "panic-uart1", feature(core_intrinsics))]
 
 //! Low-level boot of the Raspberry's processor
 
 #[cfg(feature = "panic-abort")]
 extern crate panic_abort;
+
+#[cfg(feature = "panic-uart1")]
+extern crate bcm2837_hal as hal;
+
+#[cfg(feature = "panic-uart1")]
+mod panic_uart1;
 
 #[macro_export]
 macro_rules! entry {

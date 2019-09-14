@@ -42,6 +42,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "mbox"
+version = "0.1.0"
+dependencies = [
+ "bcm2837-hal 0.1.0",
+ "embedded-hal 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "raspi3_boot 0.1.0",
+]
+
+[[package]]
 name = "nb"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -60,6 +69,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "raspi3_boot"
 version = "0.1.0"
 dependencies = [
+ "bcm2837-hal 0.1.0",
  "cortex-a 2.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "panic-abort 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "r0 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",

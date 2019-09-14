@@ -1,5 +1,5 @@
 [package]
-name = "uart1"
+name = "mbox"
 version = "0.1.0"
 authors = ["Jon Lamb"]
 edition = "2018"
