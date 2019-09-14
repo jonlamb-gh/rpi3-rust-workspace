@@ -1,4 +1,3 @@
-use crate::pmem::PMem;
 use bcm2837::mbox::*;
 use core::convert::TryFrom;
 use core::sync::atomic::{compiler_fence, Ordering};
@@ -38,30 +37,36 @@ impl From<Channel> for u32 {
         c as u32
     }
 }
+#[repr(align(16))]
+pub struct MailboxBuffer(
+    // The address for buffer needs to be 16-byte aligned so that the
+    // Videcore can handle it properly.
+    [u32; BUFFER_LEN],
+);
 
 /// Mailbox abstraction
 pub struct Mailbox {
     mbox: MBOX,
-    buffer_pmem: PMem,
+    msg_buffer: MailboxBuffer,
 }
 
 impl Mailbox {
-    pub fn new(mbox: MBOX, buffer_pmem: PMem) -> Result<Self> {
-        if buffer_pmem.size() < BUFFER_SIZE {
-            Err(Error::Truncated)
-        } else {
-            Ok(Mailbox { mbox, buffer_pmem })
+    pub fn new(mbox: MBOX) -> Self {
+        Mailbox {
+            mbox,
+            msg_buffer: MailboxBuffer([0; BUFFER_LEN]),
         }
     }
 
     /// Returns a newly allocated high-level representation of the response
     pub fn call<R: MsgEmitter>(&mut self, channel: Channel, req: &R) -> Result<RespMsg> {
-        // TODO - add size/etc utils for new_checked() fn's
-        //
-        // TODO - check resp capacity
+        // TODO
+        // - add size/etc utils for new_checked() fn's
+        // - check resp capacity
+        // - check buffer alignment , ie #[repr(align(16))]
 
-        let mut msg =
-            unsafe { Msg::new_unchecked(self.buffer_pmem.as_mut_slice::<u32>(BUFFER_LEN)) };
+        let buffer_paddr = self.msg_buffer.0.as_ptr() as u32;
+        let mut msg = Msg::new_unchecked(&mut self.msg_buffer.0[..]);
 
         // Emit into our local buffer
         req.emit_msg(&mut msg)?;
@@ -81,7 +86,6 @@ impl Mailbox {
 
         // Write the physical address of our message
         // to the mailbox with channel identifier
-        let buffer_paddr = self.buffer_pmem.paddr();
         self.mbox
             .WRITE
             .set((buffer_paddr & !0xF) | (u32::from(channel) & 0xF));
@@ -101,8 +105,7 @@ impl Mailbox {
             if ((resp_word & 0xF) == channel.into()) && ((resp_word & !0xF) == buffer_paddr) {
                 unsafe { barrier::dmb(barrier::SY) };
 
-                let msg =
-                    unsafe { Msg::new_checked(self.buffer_pmem.as_slice::<u32>(BUFFER_SIZE)) }?;
+                let msg = Msg::new_unchecked(&self.msg_buffer.0[..]);
 
                 return match msg.reqresp_code() {
                     ReqRespCode::ResponseSuccess => Ok(RespMsg::try_from(msg)?),

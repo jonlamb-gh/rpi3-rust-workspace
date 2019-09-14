@@ -26,7 +26,6 @@ pub struct RegisterBlock {
     pub STATUS: ReadOnly<u32, STATUS::Register>, // 0x18
     __reserved_1: u32,                           // 0x1C
     pub WRITE: WriteOnly<u32>,                   // 0x20
-    __reserved_2: [u32; 5],                      // 0x24
 }
 
 pub struct MBOX {

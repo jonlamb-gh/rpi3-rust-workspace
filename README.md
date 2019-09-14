@@ -25,6 +25,12 @@ TODO
 Using 64 bit U-boot:
 
 ```bash
+git clone --depth 1 https://github.com/u-boot/u-boot.git u-boot
+ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make rpi_3_defconfig
+ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make
+```
+
+```bash
 U-Boot> version
 U-Boot 2018.11-g208ecba (Nov 14 2018 - 13:17:50 -0800)
 
@@ -44,7 +50,8 @@ setenv imgname img.bin
 # Put it somewhere else, so we don't overwrite u-boot
 setenv loadaddr 0x01000000
 
-setenv bootimg 'tftp ${loadaddr} ${serverip}:${imgname}; go ${loadaddr}'
+# Disable data cache because u-boot turns it on
+setenv bootimg 'tftp ${loadaddr} ${serverip}:${imgname}; dcache flush; dcache off; go ${loadaddr}'
 ```
 
 ## SD Card
