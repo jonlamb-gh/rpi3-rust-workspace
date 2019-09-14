@@ -7,7 +7,7 @@ Inspired by [rust-raspi3-OS-tutorials](https://github.com/rust-embedded/rust-ras
 ## Building
 
 ```rust
-cargo xbuild 
+cargo xbuild
 ```
 
 Copy elf to binary:
@@ -37,7 +37,12 @@ Environment:
 
 ```bash
 setenv imgname img.bin
-setenv loadaddr 0x80000
+
+# Normally for bare metal
+#setenv loadaddr 0x80000
+
+# Put it somewhere else, so we don't overwrite u-boot
+setenv loadaddr 0x01000000
 
 setenv bootimg 'tftp ${loadaddr} ${serverip}:${imgname}; go ${loadaddr}'
 ```

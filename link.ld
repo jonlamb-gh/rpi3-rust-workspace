@@ -26,7 +26,10 @@ ENTRY(_boot_cores);
 
 SECTIONS
 {
-    . = 0x80000;
+    /* bare metal */
+    /* . = 0x80000; */
+    /* When loading with u-boot, put it somewhere else as to not overwrite u-boot */
+    . = 0x01000000;
 
     .text :
     {
