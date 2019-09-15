@@ -47,6 +47,15 @@ dependencies = [
 
 [[package]]
 name = "embedded-graphics"
+version = "0.1.0"
+dependencies = [
+ "bcm2837-hal 0.1.0",
+ "display 0.1.0",
+ "raspi3_boot 0.1.0",
+]
+
+[[package]]
+name = "embedded-graphics"
 version = "0.6.0-alpha.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [

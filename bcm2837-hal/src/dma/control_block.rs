@@ -107,6 +107,19 @@ bitfield! {
 }
 
 impl ControlBlock {
+    pub fn new() -> Self {
+        ControlBlock {
+            info: TxfrInfoWord(0),
+            src: 0,
+            dest: 0,
+            length: TxfrLenWord(0),
+            stride: StrideWord(0),
+            next: 0,
+            _reserved_0: 0,
+            _reserved_1: 0,
+        }
+    }
+
     pub fn init(&mut self) {
         self.info = TxfrInfoWord(0);
         self.src = 0;

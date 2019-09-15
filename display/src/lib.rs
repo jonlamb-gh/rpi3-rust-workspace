@@ -1,6 +1,7 @@
 #![no_std]
 
 extern crate bcm2837_hal as hal;
+pub extern crate embedded_graphics;
 
 use crate::hal::dma;
 use crate::hal::mailbox::{AllocFramebufferRepr, PixelOrder};
@@ -154,8 +155,18 @@ impl<'a> Display<'a> {
     fn pixel_word<C: RgbColor>(pixel_order: PixelOrder, color: &C) -> u32 {
         // TODO
         match pixel_order {
-            PixelOrder::RGB => color.r() as u32,
-            PixelOrder::BGR => color.r() as u32,
+            PixelOrder::RGB => {
+                0xFF_00_00_00
+                    | color.r() as u32
+                    | (color.g() as u32) << 8
+                    | (color.b() as u32) << 16
+            }
+            PixelOrder::BGR => {
+                0xFF_00_00_00
+                    | color.b() as u32
+                    | (color.g() as u32) << 8
+                    | (color.r() as u32) << 16
+            }
             _ => unimplemented!("Unsupported pixel color {:?}", pixel_order),
         }
     }
@@ -315,17 +326,20 @@ impl<'a> Display<'a> {
     }
 }
 
-//impl Drawing<Color> for Display {
-//    fn draw<T>(&mut self, item_pixels: T)
-//    where
-//        T: Iterator<Item = Pixel<Color>>,
-//    {
-//        for Pixel(coord, color) in item_pixels {
-//            if coord[0] as usize >= self.width() || coord[1] as usize >=
-// self.height() {                continue;
-//            }
-//
-//            self.set_pixel(coord[0] as _, coord[1] as _, color);
-//        }
-//    }
-//}
+impl<'a, C> Drawing<C> for Display<'a>
+where
+    C: RgbColor,
+{
+    fn draw<T>(&mut self, item_pixels: T)
+    where
+        T: IntoIterator<Item = Pixel<C>>,
+    {
+        for Pixel(coord, color) in item_pixels {
+            if coord[0] as usize >= self.width() || coord[1] as usize >= self.height() {
+                continue;
+            }
+
+            self.set_pixel(coord[0] as _, coord[1] as _, &color);
+        }
+    }
+}

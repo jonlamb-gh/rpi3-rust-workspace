@@ -9,4 +9,5 @@ members = [
     "examples/i2c1",
     "examples/mbox",
     "examples/keypad",
+    "examples/embedded-graphics",
 ]
