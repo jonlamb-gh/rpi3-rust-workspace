@@ -54,6 +54,11 @@ pub struct PushPull;
 
 pub struct Parts {
     /// Pins
+    pub p0: Pin0<Input<Floating>>,
+    pub p1: Pin1<Input<Floating>>,
+    pub p2: Pin2<Input<Floating>>,
+    pub p3: Pin3<Input<Floating>>,
+    pub p4: Pin4<Input<Floating>>,
     pub p5: Pin5<Input<Floating>>,
     pub p6: Pin6<Input<Floating>>,
     pub p7: Pin7<Input<Floating>>,
@@ -78,6 +83,31 @@ impl GpioExt for GPIO {
     fn split(self) -> Parts {
         // Each pin gets a copy of the GPIO paddr
         Parts {
+            p0: Pin0 {
+                pin: 0,
+                gpio: GPIO::new(),
+                _mode: PhantomData,
+            },
+            p1: Pin1 {
+                pin: 1,
+                gpio: GPIO::new(),
+                _mode: PhantomData,
+            },
+            p2: Pin2 {
+                pin: 2,
+                gpio: GPIO::new(),
+                _mode: PhantomData,
+            },
+            p3: Pin3 {
+                pin: 3,
+                gpio: GPIO::new(),
+                _mode: PhantomData,
+            },
+            p4: Pin4 {
+                pin: 4,
+                gpio: GPIO::new(),
+                _mode: PhantomData,
+            },
             p5: Pin5 {
                 pin: 5,
                 gpio: GPIO::new(),
@@ -374,6 +404,11 @@ gpio!(
     GPSET0,
     GPCLR0,
     [
+        Pin0: (p0, FSEL0, PUDCLK0, Input<Floating>),
+        Pin1: (p1, FSEL1, PUDCLK1, Input<Floating>),
+        Pin2: (p2, FSEL2, PUDCLK2, Input<Floating>),
+        Pin3: (p3, FSEL3, PUDCLK3, Input<Floating>),
+        Pin4: (p4, FSEL4, PUDCLK4, Input<Floating>),
         Pin5: (p5, FSEL5, PUDCLK5, Input<Floating>),
         Pin6: (p6, FSEL6, PUDCLK6, Input<Floating>),
         Pin7: (p7, FSEL7, PUDCLK7, Input<Floating>),

@@ -70,6 +70,66 @@ register_bitfields! {
             AF3 = 0b111,
             AF4 = 0b011,
             AF5 = 0b010
+        ],
+
+        /// Pin 4
+        FSEL4 OFFSET(12) NUMBITS(3) [
+            Input = 0b000,
+            Output = 0b001,
+            AF0 = 0b100,
+            AF1 = 0b101,
+            AF2 = 0b110,
+            AF3 = 0b111,
+            AF4 = 0b011,
+            AF5 = 0b010
+        ],
+
+        /// Pin 3
+        FSEL3 OFFSET(9) NUMBITS(3) [
+            Input = 0b000,
+            Output = 0b001,
+            AF0 = 0b100,
+            AF1 = 0b101,
+            AF2 = 0b110,
+            AF3 = 0b111,
+            AF4 = 0b011,
+            AF5 = 0b010
+        ],
+
+        /// Pin 2
+        FSEL2 OFFSET(6) NUMBITS(3) [
+            Input = 0b000,
+            Output = 0b001,
+            AF0 = 0b100,
+            AF1 = 0b101,
+            AF2 = 0b110,
+            AF3 = 0b111,
+            AF4 = 0b011,
+            AF5 = 0b010
+        ],
+
+        /// Pin 1
+        FSEL1 OFFSET(3) NUMBITS(3) [
+            Input = 0b000,
+            Output = 0b001,
+            AF0 = 0b100,
+            AF1 = 0b101,
+            AF2 = 0b110,
+            AF3 = 0b111,
+            AF4 = 0b011,
+            AF5 = 0b010
+        ],
+
+        /// Pin 0
+        FSEL0 OFFSET(0) NUMBITS(3) [
+            Input = 0b000,
+            Output = 0b001,
+            AF0 = 0b100,
+            AF1 = 0b101,
+            AF2 = 0b110,
+            AF3 = 0b111,
+            AF4 = 0b011,
+            AF5 = 0b010
         ]
     ],
 
@@ -309,6 +369,36 @@ register_bitfields! {
 
         /// Pin 5
         PUDCLK5 OFFSET(5) NUMBITS(1) [
+            NoEffect = 0,
+            AssertClock = 1
+        ],
+
+        /// Pin 4
+        PUDCLK4 OFFSET(4) NUMBITS(1) [
+            NoEffect = 0,
+            AssertClock = 1
+        ],
+
+        /// Pin 3
+        PUDCLK3 OFFSET(3) NUMBITS(1) [
+            NoEffect = 0,
+            AssertClock = 1
+        ],
+
+        /// Pin 2
+        PUDCLK2 OFFSET(2) NUMBITS(1) [
+            NoEffect = 0,
+            AssertClock = 1
+        ],
+
+        /// Pin 1
+        PUDCLK1 OFFSET(1) NUMBITS(1) [
+            NoEffect = 0,
+            AssertClock = 1
+        ],
+
+        /// Pin 0
+        PUDCLK0 OFFSET(0) NUMBITS(1) [
             NoEffect = 0,
             AssertClock = 1
         ]
