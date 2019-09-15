@@ -18,7 +18,10 @@ cargo objcopy -- -O binary target/$(TARGET)/release/img /tmp/img.bin
 
 ## Simulating
 
-TODO
+```bash
+# For output on UART1
+qemu-system-aarch64 -M raspi3 -nographic -serial null -serial mon:stdio -kernel /path/to/binary
+```
 
 ## U-boot
 
