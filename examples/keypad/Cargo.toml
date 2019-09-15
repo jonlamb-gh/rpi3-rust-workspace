@@ -11,10 +11,6 @@ bcm2837-hal = { path = "../../bcm2837-hal" }
 git = "https://github.com/jonlamb-gh/keypad.git"
 branch = "digital-v2"
 
-[dependencies.embedded-hal]
-features = ["unproven"]
-version = "0.2"
-
 [dependencies.raspi3_boot]
 path = "../../raspi3_boot"
 default-features = false
