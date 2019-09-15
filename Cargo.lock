@@ -42,11 +42,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "i2c0"
+name = "i2c1"
 version = "0.1.0"
 dependencies = [
  "bcm2837-hal 0.1.0",
- "embedded-hal 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "raspi3_boot 0.1.0",
 ]
 

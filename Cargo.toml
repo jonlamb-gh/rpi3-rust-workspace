@@ -5,7 +5,7 @@ members = [
     "bcm2837",
     "bcm2837-hal",
     "examples/uart1",
-    "examples/i2c0",
+    "examples/i2c1",
     "examples/mbox",
     "examples/keypad",
 ]

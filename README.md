@@ -77,6 +77,7 @@ Contents of `config.txt`:
 enable_uart=1
 arm_64bit=1
 dtoverlay=pi3-disable-bt
+dtparam=i2c_arm=on
 kernel=u-boot.bin
 ```
 

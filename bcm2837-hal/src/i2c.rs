@@ -3,7 +3,7 @@
 // TODO
 // - macro gen I2C2/x
 // - support speeds other than 100k
-// - is BSC2 usable?
+// - is BSC2 usable? docs say don't use BSC0/BSC2?
 // - nb blocking support?
 
 // some other examples
@@ -50,10 +50,10 @@ pub struct I2c<I2C, PINS> {
     pins: PINS,
 }
 
-impl<PINS> I2c<I2C0, PINS> {
-    pub fn i2c0(i2c: I2C0, pins: PINS, _speed: KiloHertz, clocks: Clocks) -> Self
+impl<PINS> I2c<I2C1, PINS> {
+    pub fn i2c1(i2c: I2C1, pins: PINS, _speed: KiloHertz, clocks: Clocks) -> Self
     where
-        PINS: Pins<I2C0>,
+        PINS: Pins<I2C1>,
     {
         // Reset, clear status bits
         i2c.CTRL.set(0);
@@ -64,14 +64,17 @@ impl<PINS> I2c<I2C0, PINS> {
         let speed: Hertz = KiloHertz(100).into();
         let cdiv = clocks.apbclk().0 / speed.0;
 
+        // TODO
+        // 0x5DC is default given core_clk 150 MHz
+        //i2c.DIV.modify(DIV::CDIV.val(0x5DC));
         i2c.DIV.modify(DIV::CDIV.val(cdiv));
 
-        i2c.CTRL.modify(CTRL::I2CEN::SET + CTRL::CLEAR::ClearFifo);
+        i2c.CTRL.modify(CTRL::CLEAR::ClearFifo);
 
         I2c { i2c, pins }
     }
 
-    pub fn free(self) -> (I2C0, PINS) {
+    pub fn free(self) -> (I2C1, PINS) {
         (self.i2c, self.pins)
     }
 
@@ -89,7 +92,7 @@ impl<PINS> I2c<I2C0, PINS> {
     }
 }
 
-impl<PINS> Read for I2c<I2C0, PINS> {
+impl<PINS> Read for I2c<I2C1, PINS> {
     type Error = Error;
 
     fn read(&mut self, addr: u8, buffer: &mut [u8]) -> Result<(), Self::Error> {
@@ -108,7 +111,9 @@ impl<PINS> Read for I2c<I2C0, PINS> {
         self.i2c.SA.modify(SA::ADDR.val(addr as _));
 
         // Start read
-        self.i2c.CTRL.modify(CTRL::ST::SET + CTRL::RW::ReadTransfer);
+        self.i2c
+            .CTRL
+            .modify(CTRL::I2CEN::SET + CTRL::ST::SET + CTRL::RW::ReadTransfer);
 
         for c in buffer {
             *c = self.recv_byte()?;
@@ -129,11 +134,13 @@ impl<PINS> Read for I2c<I2C0, PINS> {
         // Clear done
         self.i2c.STATUS.modify(STATUS::DONE::SET);
 
+        self.i2c.CTRL.modify(CTRL::I2CEN::CLEAR);
+
         result
     }
 }
 
-impl<PINS> Write for I2c<I2C0, PINS> {
+impl<PINS> Write for I2c<I2C1, PINS> {
     type Error = Error;
 
     fn write(&mut self, addr: u8, buffer: &[u8]) -> Result<(), Self::Error> {
@@ -154,7 +161,7 @@ impl<PINS> Write for I2c<I2C0, PINS> {
         // Start write
         self.i2c
             .CTRL
-            .modify(CTRL::ST::SET + CTRL::RW::WriteTransfer);
+            .modify(CTRL::I2CEN::SET + CTRL::ST::SET + CTRL::RW::WriteTransfer);
 
         for c in buffer {
             self.send_byte(*c)?;
@@ -175,11 +182,13 @@ impl<PINS> Write for I2c<I2C0, PINS> {
         // Clear done
         self.i2c.STATUS.modify(STATUS::DONE::SET);
 
+        self.i2c.CTRL.modify(CTRL::I2CEN::CLEAR);
+
         result
     }
 }
 
-impl<PINS> WriteRead for I2c<I2C0, PINS> {
+impl<PINS> WriteRead for I2c<I2C1, PINS> {
     type Error = Error;
 
     fn write_read(&mut self, addr: u8, bytes: &[u8], buffer: &mut [u8]) -> Result<(), Self::Error> {
