@@ -4,6 +4,7 @@ members = [
     "raspi3_boot",
     "bcm2837",
     "bcm2837-hal",
+    "display",
     "examples/uart1",
     "examples/i2c1",
     "examples/mbox",
