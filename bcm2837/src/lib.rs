@@ -2,6 +2,9 @@
 
 const MMIO_BASE: u32 = 0x3F00_0000;
 
+pub mod bsc0;
+pub mod bsc1;
+pub mod bsc2;
 pub mod dma;
 pub mod gpio;
 pub mod mbox;
