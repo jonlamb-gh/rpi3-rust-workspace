@@ -128,12 +128,12 @@ impl<PINS> Spi<SPI0, PINS> {
 
         // TODO - need to construct Clocks using mailbox data from vc?
         // TODO - open up all the speeds, this is ported from the Linux driver
-        let cdiv = if freq.0 >= (clocks.apbclk().0 / 2) {
+        let cdiv = if freq.0 >= (clocks.core().0 / 2) {
             // clk_hz/2 is the fastest we can go
             2
         } else if freq.0 > 0 {
             // CDIV must be a multiple of two
-            let mut div = (clocks.apbclk().0 + freq.0 - 1) / freq.0;
+            let mut div = (clocks.core().0 + freq.0 - 1) / freq.0;
             div += div % 2;
 
             if div >= 65536 {

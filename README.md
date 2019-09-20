@@ -76,6 +76,7 @@ Contents of `config.txt`:
 ```bash
 enable_uart=1
 arm_64bit=1
+# Disables the Bluetooth device and restores UART0/ttyAMA0 to GPIOs 14 and 15
 dtoverlay=pi3-disable-bt
 dtparam=i2c_arm=on
 kernel=u-boot.bin
@@ -83,7 +84,9 @@ kernel=u-boot.bin
 
 ## Useful Links
 
-- https://github.com/raspberrypi/documentation/files/1888662/BCM2837-ARM-Peripherals.-.Revised.-.V2-1.pdf
+- [Revised BCM2837 doc](https://github.com/raspberrypi/documentation/files/1888662/BCM2837-ARM-Peripherals.-.Revised.-.V2-1.pdf)
+- [Bare-metal boot code for ARMv8-A](http://infocenter.arm.com/help/topic/com.arm.doc.dai0527a/DAI0527A_baremetal_boot_code_for_ARMv8_A_processors.pdf)
+- [Bare-metal C++ code](https://github.com/rsta2/circle)
 - https://github.com/hermanhermitage/videocoreiv
 - https://github.com/rust-embedded/rust-raspi3-tutorial
 - https://github.com/bztsrc/raspi3-tutorial

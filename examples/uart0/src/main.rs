@@ -6,7 +6,7 @@ extern crate bcm2837_hal as hal;
 use crate::hal::bcm2837::gpio::GPIO;
 use crate::hal::bcm2837::mbox::MBOX;
 use crate::hal::bcm2837::sys_timer::SysTimer;
-use crate::hal::bcm2837::uart1::UART1;
+use crate::hal::bcm2837::uart0::UART0;
 use crate::hal::clocks::Clocks;
 use crate::hal::mailbox::Mailbox;
 use crate::hal::prelude::*;
@@ -14,6 +14,7 @@ use crate::hal::serial::Serial;
 use core::fmt::Write;
 
 fn kernel_entry() -> ! {
+    // TODO - set UART clock to 4 MHz or fix Serial<UART0>
     let mut mbox = Mailbox::new(MBOX::new());
     let clocks = Clocks::freeze(&mut mbox).unwrap();
     let gpio = GPIO::new();
@@ -22,7 +23,7 @@ fn kernel_entry() -> ! {
     let tx = gp.p14.into_alternate_af0();
     let rx = gp.p15.into_alternate_af0();
 
-    let mut serial = Serial::uart1(UART1::new(), (tx, rx), 0, clocks);
+    let mut serial = Serial::uart0(UART0::new(), (tx, rx), 0, clocks);
 
     let sys_timer = SysTimer::new();
     let mut sys_counter = sys_timer.split().sys_counter;

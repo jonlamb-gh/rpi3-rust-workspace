@@ -1,4 +1,7 @@
 //! General Purpose Input / Output
+//!
+//! See the pinout:
+//! https://pinout.xyz/
 
 use bcm2837::gpio::*;
 use core::marker::PhantomData;

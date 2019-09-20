@@ -1,47 +1,49 @@
 //! Serial
-//! UART0 and UART1 are significantly different so they both
-//! have hand implementations rather than using a macro
+//!
+//! There are two built-in UARTS, a PL011 (UART0)
+//! and a mini UART (UART1).
+//!
+//! See the documentation:
+//! https://www.raspberrypi.org/documentation/configuration/uart.md
 
+use crate::clocks::Clocks;
+use crate::gpio::{Alternate, Pin14, Pin15, AF0, AF5};
 use crate::hal::prelude::*;
 use crate::hal::serial;
-use bcm2837::gpio::*;
 use bcm2837::uart0::*;
 use bcm2837::uart1::*;
-use cortex_a::asm;
+use core::fmt;
 use nb::block;
 use void::Void;
 
-pub struct Serial<UART> {
-    uart: UART,
+pub trait Pins<UART> {}
+pub trait PinTx<UART> {}
+pub trait PinRx<UART> {}
+
+impl<UART, TX, RX> Pins<UART> for (TX, RX)
+where
+    TX: PinTx<UART>,
+    RX: PinRx<UART>,
+{
 }
 
-// TODO - consume pins 14 and 15
+impl PinTx<UART0> for Pin14<Alternate<AF0>> {}
+impl PinRx<UART0> for Pin15<Alternate<AF0>> {}
 
-impl Serial<UART0> {
-    // TODO
-    // - needs to configure the clock using a mbox message
-    // - time bits, Bps, etc
-    pub fn uart0(uart: UART0, _baud_rate: u32, gpio: &mut GPIO) -> Self {
+impl PinTx<UART1> for Pin14<Alternate<AF5>> {}
+impl PinRx<UART1> for Pin15<Alternate<AF5>> {}
+
+/// Serial abstraction
+pub struct Serial<UART, PINS> {
+    uart: UART,
+    pins: PINS,
+}
+
+impl<PINS> Serial<UART0, PINS> {
+    // TODO - use baud_rate and clocks
+    pub fn uart0(uart: UART0, pins: PINS, _baud_rate: u32, _clocks: Clocks) -> Self {
         // Turn off UART0
         uart.CR.set(0);
-
-        // TODO - mbox clock configs
-
-        // Map UART0 to GPIO pins
-        gpio.GPFSEL1
-            .modify(GPFSEL1::FSEL14::AF0 + GPFSEL1::FSEL15::AF0);
-
-        gpio.GPPUD.set(0);
-        for _ in 0..150 {
-            asm::nop();
-        }
-
-        gpio.GPPUDCLK0
-            .write(GPPUDCLK0::PUDCLK14::AssertClock + GPPUDCLK0::PUDCLK15::AssertClock);
-        for _ in 0..150 {
-            asm::nop();
-        }
-        gpio.GPPUDCLK0.set(0);
 
         uart.ICR.write(ICR::ALL::CLEAR);
         uart.IBRD.write(IBRD::IBRD.val(2)); // Results in 115200 baud
@@ -50,15 +52,15 @@ impl Serial<UART0> {
         uart.CR
             .write(CR::UARTEN::Enabled + CR::TXE::Enabled + CR::RXE::Enabled);
 
-        Serial { uart }
+        Serial { uart, pins }
     }
 
-    pub fn free(self) -> UART0 {
-        self.uart
+    pub fn free(self) -> (UART0, PINS) {
+        (self.uart, self.pins)
     }
 }
 
-impl serial::Write<u8> for Serial<UART0> {
+impl<PINS> serial::Write<u8> for Serial<UART0, PINS> {
     type Error = Void;
 
     fn flush(&mut self) -> nb::Result<(), Void> {
@@ -79,8 +81,8 @@ impl serial::Write<u8> for Serial<UART0> {
     }
 }
 
-impl ::core::fmt::Write for Serial<UART0> {
-    fn write_str(&mut self, s: &str) -> ::core::fmt::Result {
+impl<PINS> fmt::Write for Serial<UART0, PINS> {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
         for b in s.bytes() {
             // Convert '\n' to '\r\n'
             if b as char == '\n' {
@@ -92,9 +94,9 @@ impl ::core::fmt::Write for Serial<UART0> {
     }
 }
 
-impl Serial<UART1> {
-    // TODO - time bits, Bps, etc
-    pub fn uart1(uart: UART1, _baud_rate: u32, gpio: &mut GPIO) -> Self {
+impl<PINS> Serial<UART1, PINS> {
+    // TODO - use baud_rate and clocks
+    pub fn uart1(uart: UART1, pins: PINS, _baud_rate: u32, _clocks: Clocks) -> Self {
         uart.AUX_ENABLES.modify(AUX_ENABLES::MINI_UART_ENABLE::SET);
         uart.AUX_MU_IER.set(0);
         uart.AUX_MU_CNTL.set(0);
@@ -104,34 +106,18 @@ impl Serial<UART1> {
         uart.AUX_MU_IIR.write(AUX_MU_IIR::FIFO_CLEAR::All);
         uart.AUX_MU_BAUD.write(AUX_MU_BAUD::RATE.val(270)); // 115200 baud
 
-        // Map UART1 to GPIO pins
-        gpio.GPFSEL1
-            .modify(GPFSEL1::FSEL14::AF5 + GPFSEL1::FSEL15::AF5);
-
-        // Enable pins 14 and 15
-        gpio.GPPUD.set(0);
-        for _ in 0..150 {
-            asm::nop();
-        }
-        gpio.GPPUDCLK0
-            .write(GPPUDCLK0::PUDCLK14::AssertClock + GPPUDCLK0::PUDCLK15::AssertClock);
-        for _ in 0..150 {
-            asm::nop();
-        }
-        gpio.GPPUDCLK0.set(0);
-
         uart.AUX_MU_CNTL
             .write(AUX_MU_CNTL::RX_EN::Enabled + AUX_MU_CNTL::TX_EN::Enabled);
 
-        Serial { uart }
+        Serial { uart, pins }
     }
 
-    pub fn free(self) -> UART1 {
-        self.uart
+    pub fn free(self) -> (UART1, PINS) {
+        (self.uart, self.pins)
     }
 }
 
-impl serial::Read<u8> for Serial<UART1> {
+impl<PINS> serial::Read<u8> for Serial<UART1, PINS> {
     type Error = Void;
 
     fn read(&mut self) -> nb::Result<u8, Void> {
@@ -150,7 +136,7 @@ impl serial::Read<u8> for Serial<UART1> {
     }
 }
 
-impl serial::Write<u8> for Serial<UART1> {
+impl<PINS> serial::Write<u8> for Serial<UART1, PINS> {
     type Error = Void;
 
     fn flush(&mut self) -> nb::Result<(), Void> {
@@ -171,8 +157,8 @@ impl serial::Write<u8> for Serial<UART1> {
     }
 }
 
-impl ::core::fmt::Write for Serial<UART1> {
-    fn write_str(&mut self, s: &str) -> ::core::fmt::Result {
+impl<PINS> core::fmt::Write for Serial<UART1, PINS> {
+    fn write_str(&mut self, s: &str) -> fmt::Result {
         for b in s.bytes() {
             // Convert '\n' to '\r\n'
             if b as char == '\n' {

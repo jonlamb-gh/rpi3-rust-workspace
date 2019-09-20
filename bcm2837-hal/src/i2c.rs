@@ -9,6 +9,7 @@
 // some other examples
 // https://github.com/mpod/raspi-bare-metal/blob/master/src/bcm2835.c#L713
 // https://github.com/bootc/linux/blob/rpi-3.2.19/drivers/i2c/busses/i2c-bcm2708.c
+// https://github.com/rsta2/circle/blob/master/lib/i2cmaster.cpp
 
 use crate::clocks::Clocks;
 use crate::gpio::{Alternate, Pin0, Pin1, Pin2, Pin3, AF0};
@@ -62,7 +63,7 @@ impl<PINS> I2c<I2C1, PINS> {
 
         // TODO - only 100k supported
         let speed: Hertz = KiloHertz(100).into();
-        let cdiv = clocks.apbclk().0 / speed.0;
+        let cdiv = clocks.core().0 / speed.0;
 
         // TODO
         // 0x5DC is default given core_clk 150 MHz

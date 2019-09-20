@@ -5,16 +5,21 @@ extern crate bcm2837_hal as hal;
 
 use crate::hal::bcm2837::bsc1::I2C1;
 use crate::hal::bcm2837::gpio::GPIO;
+use crate::hal::bcm2837::mbox::MBOX;
 use crate::hal::bcm2837::sys_timer::SysTimer;
 use crate::hal::bcm2837::uart1::UART1;
 use crate::hal::clocks::Clocks;
 use crate::hal::i2c::I2c;
+use crate::hal::mailbox::Mailbox;
 use crate::hal::prelude::*;
 use crate::hal::serial::Serial;
 use core::fmt::Write as CoreWrite;
 
 fn kernel_entry() -> ! {
-    let clocks = Clocks::read();
+    let mut mbox = Mailbox::new(MBOX::new());
+
+    let clocks = Clocks::freeze(&mut mbox).unwrap();
+
     let mut gpio = GPIO::new();
 
     let sys_timer = SysTimer::new();

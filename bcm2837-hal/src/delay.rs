@@ -2,24 +2,27 @@
 
 use crate::clocks::Clocks;
 use crate::hal::blocking::delay::{DelayMs, DelayUs};
+use core::cmp;
 use cortex_a::asm;
 
 /// NOP used as a delay provider
 /// NOTE: this is not accurate, for accurate timing and delays consider
 /// using one of the timers
-pub fn delay_us(us: u32) {
-    let cnt = us * (Clocks::read().apbclk().0 / 250_000_000);
-
+pub fn delay_us(us: u32, clocks: &Clocks) {
+    // TODO - fix this
+    let cnt = us * cmp::max(clocks.core().0 / 1_000_000, 1);
     for _ in 0..cnt {
         asm::nop();
     }
 }
 
-pub struct Delay {}
+pub struct Delay {
+    clocks: Clocks,
+}
 
 impl Delay {
-    pub fn new() -> Self {
-        Delay {}
+    pub fn new(clocks: Clocks) -> Self {
+        Delay { clocks }
     }
 }
 
@@ -43,7 +46,7 @@ impl DelayMs<u8> for Delay {
 
 impl DelayUs<u32> for Delay {
     fn delay_us(&mut self, us: u32) {
-        delay_us(us);
+        delay_us(us, &self.clocks);
     }
 }
 

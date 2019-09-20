@@ -1,4 +1,6 @@
 //! UART0
+//!
+//! The primary PL011 UART.
 
 use crate::MMIO_BASE;
 use core::marker::PhantomData;

@@ -1,4 +1,6 @@
 //! UART1
+//!
+//! The auxilary mini UART.
 
 use crate::MMIO_BASE;
 use core::marker::PhantomData;

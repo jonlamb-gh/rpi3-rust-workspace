@@ -144,6 +144,14 @@ version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
+name = "uart0"
+version = "0.1.0"
+dependencies = [
+ "bcm2837-hal 0.1.0",
+ "raspi3_boot 0.1.0",
+]
+
+[[package]]
 name = "uart1"
 version = "0.1.0"
 dependencies = [
