@@ -7,19 +7,27 @@ use crate::hal::bcm2837::dma::{DMA, ENABLE};
 use crate::hal::bcm2837::gpio::GPIO;
 use crate::hal::bcm2837::mbox::MBOX;
 use crate::hal::bcm2837::uart1::UART1;
+use crate::hal::clocks::Clocks;
 use crate::hal::dma;
 use crate::hal::mailbox::*;
 use crate::hal::prelude::*;
 use crate::hal::serial::Serial;
+use crate::hal::time::Bps;
 use core::fmt::Write;
 use display::embedded_graphics::prelude::*;
 use display::embedded_graphics::{fonts::Font12x16, pixelcolor::Rgb888, text_12x16};
 use display::{Display, SCRATCHPAD_MEM_MIN_SIZE};
 
 fn kernel_entry() -> ! {
-    let mut gpio = GPIO::new();
-    let mut serial = Serial::uart1(UART1::new(), 0, &mut gpio);
     let mut mbox = Mailbox::new(MBOX::new());
+    let clocks = Clocks::freeze(&mut mbox).unwrap();
+    let gpio = GPIO::new();
+    let gp = gpio.split();
+
+    let tx = gp.p14.into_alternate_af5();
+    let rx = gp.p15.into_alternate_af5();
+
+    let mut serial = Serial::uart1(UART1::new(), (tx, rx), Bps(115200), clocks);
 
     // Construct the DMA peripheral, reset and enable CH0
     let dma = DMA::new();

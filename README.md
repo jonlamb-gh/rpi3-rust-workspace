@@ -85,15 +85,13 @@ kernel=u-boot.bin
 ## Useful Links
 
 - [Revised BCM2837 doc](https://github.com/raspberrypi/documentation/files/1888662/BCM2837-ARM-Peripherals.-.Revised.-.V2-1.pdf)
-- [Bare-metal boot code for ARMv8-A](http://infocenter.arm.com/help/topic/com.arm.doc.dai0527a/DAI0527A_baremetal_boot_code_for_ARMv8_A_processors.pdf)
+- [Bare metal boot code for ARMv8-A](http://infocenter.arm.com/help/topic/com.arm.doc.dai0527a/DAI0527A_baremetal_boot_code_for_ARMv8_A_processors.pdf)
 - [Bare-metal C++ code](https://github.com/rsta2/circle)
-- https://github.com/hermanhermitage/videocoreiv
-- https://github.com/rust-embedded/rust-raspi3-tutorial
-- https://github.com/bztsrc/raspi3-tutorial
-- https://github.com/raspberrypi/firmware/wiki/Mailbox-framebuffer-interface
-- https://github.com/raspberrypi/firmware/wiki/Mailbox-property-interface#set-clock-rate
-- https://github.com/brianwiddas/pi-baremetal/blob/master/framebuffer.c
-- https://github.com/BrianSidebotham/arm-tutorial-rpi/tree/master/part-5
-- https://docs.sel4.systems/Hardware/Rpi3.html
-- https://a-delacruz.github.io/ubuntu/rpi3-setup-64bit-uboot.html
-- https://github.com/hermanhermitage/videocoreiv/wiki/VideoCore-IV-Programmers-Manual
+- [Tools and info on the  Broadcom VideoCore IV](https://github.com/hermanhermitage/videocoreiv)
+- [Bare metal RPi3 in C](https://github.com/bztsrc/raspi3-tutorial)
+- [Wiki: Mailbox framebuffer interface](https://github.com/raspberrypi/firmware/wiki/Mailbox-framebuffer-interface)
+- [Wiki: Mailbox property interface](https://github.com/raspberrypi/firmware/wiki/Mailbox-property-interface)
+- [Raspberry Pi bare metal experiments](https://github.com/brianwiddas/pi-baremetal/blob/master/framebuffer.c)
+- [Raspberry-Pi Bare Metal Tutorial](https://github.com/BrianSidebotham/arm-tutorial-rpi)
+- [Raspberry Pi 3 with 64-bit U-Boot](https://a-delacruz.github.io/ubuntu/rpi3-setup-64bit-uboot.html)
+- [VideoCore-IV-Programmers-Manual](https://github.com/hermanhermitage/videocoreiv/wiki/VideoCore-IV-Programmers-Manual)

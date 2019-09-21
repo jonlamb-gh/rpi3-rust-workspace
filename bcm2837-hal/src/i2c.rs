@@ -1,9 +1,7 @@
 //! I2C
 
 // TODO
-// - macro gen I2C2/x
-// - support speeds other than 100k
-// - is BSC2 usable? docs say don't use BSC0/BSC2?
+// - docs say don't use BSC0/BSC2?
 // - nb blocking support?
 
 // some other examples
@@ -12,9 +10,9 @@
 // https://github.com/rsta2/circle/blob/master/lib/i2cmaster.cpp
 
 use crate::clocks::Clocks;
-use crate::gpio::{Alternate, Pin0, Pin1, Pin2, Pin3, AF0};
+use crate::gpio::{Alternate, Pin2, Pin3, AF0};
 use crate::hal::blocking::i2c::{Read, Write, WriteRead};
-use crate::time::{Hertz, KiloHertz};
+use crate::time::Hertz;
 use bcm2837::{bsc0::*, bsc1::I2C1};
 
 /// I2C error
@@ -39,9 +37,6 @@ where
 {
 }
 
-impl PinSda<I2C0> for Pin0<Alternate<AF0>> {}
-impl PinScl<I2C0> for Pin1<Alternate<AF0>> {}
-
 impl PinSda<I2C1> for Pin2<Alternate<AF0>> {}
 impl PinScl<I2C1> for Pin3<Alternate<AF0>> {}
 
@@ -52,24 +47,21 @@ pub struct I2c<I2C, PINS> {
 }
 
 impl<PINS> I2c<I2C1, PINS> {
-    pub fn i2c1(i2c: I2C1, pins: PINS, _speed: KiloHertz, clocks: Clocks) -> Self
+    pub fn i2c1<S>(i2c: I2C1, pins: PINS, speed: S, clocks: Clocks) -> Self
     where
         PINS: Pins<I2C1>,
+        S: Into<Hertz>,
     {
         // Reset, clear status bits
         i2c.CTRL.set(0);
         i2c.STATUS
             .modify(STATUS::CLKT::SET + STATUS::ERR::SET + STATUS::DONE::SET);
 
-        // TODO - only 100k supported
-        let speed: Hertz = KiloHertz(100).into();
+        let speed: Hertz = speed.into();
         let cdiv = clocks.core().0 / speed.0;
 
-        // TODO
-        // 0x5DC is default given core_clk 150 MHz
-        //i2c.DIV.modify(DIV::CDIV.val(0x5DC));
+        // Configure clock divider and clear FIFOs
         i2c.DIV.modify(DIV::CDIV.val(cdiv));
-
         i2c.CTRL.modify(CTRL::CLEAR::ClearFifo);
 
         I2c { i2c, pins }

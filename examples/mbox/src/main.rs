@@ -11,15 +11,19 @@ use crate::hal::clocks::Clocks;
 use crate::hal::mailbox::*;
 use crate::hal::prelude::*;
 use crate::hal::serial::Serial;
+use crate::hal::time::Bps;
 use core::fmt::Write;
 
 fn kernel_entry() -> ! {
     let mut mbox = Mailbox::new(MBOX::new());
-
     let clocks = Clocks::freeze(&mut mbox).unwrap();
+    let gpio = GPIO::new();
+    let gp = gpio.split();
 
-    let mut gpio = GPIO::new();
-    let mut serial = Serial::uart1(UART1::new(), 0, &mut gpio);
+    let tx = gp.p14.into_alternate_af5();
+    let rx = gp.p15.into_alternate_af5();
+
+    let mut serial = Serial::uart1(UART1::new(), (tx, rx), Bps(115200), clocks);
 
     let sys_timer = SysTimer::new();
     let mut sys_counter = sys_timer.split().sys_counter;
