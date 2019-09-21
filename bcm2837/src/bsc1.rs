@@ -5,7 +5,7 @@ use crate::MMIO_BASE;
 use core::marker::PhantomData;
 use core::ops::{Deref, DerefMut};
 
-pub const PADDR: u32 = MMIO_BASE + 0x7E80_4000;
+pub const PADDR: u32 = MMIO_BASE + 0x80_4000;
 
 pub struct I2C1 {
     _marker: PhantomData<*const ()>,

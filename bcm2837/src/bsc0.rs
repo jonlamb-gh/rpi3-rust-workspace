@@ -5,7 +5,7 @@ use core::marker::PhantomData;
 use core::ops::{Deref, DerefMut};
 use register::{mmio::ReadWrite, register_bitfields};
 
-pub const PADDR: u32 = MMIO_BASE + 0x7E20_5000;
+pub const PADDR: u32 = MMIO_BASE + 0x20_5000;
 
 register_bitfields! {
     u32,

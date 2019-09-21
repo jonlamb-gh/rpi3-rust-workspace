@@ -38,9 +38,11 @@ fn kernel_entry() -> ! {
 
     writeln!(serial, "I2C example").ok();
 
+    writeln!(serial, "{:#?}", clocks).ok();
+
     loop {
         writeln!(serial, "Sending data").ok();
-        i2c.write(0x68, &[0xAB, 0xBC]).unwrap();
+        i2c.write(0x68, &[22, 'A' as u8]).unwrap();
         sys_counter.delay_ms(100u32);
     }
 }

@@ -22,6 +22,8 @@ pub enum Error {
     Nack,
     /// Slave held the SCL low for longer than specified
     ClockStretchTimeout,
+    /// Hw reported done but didn't drain the entire buffer
+    Truncated,
     #[doc(hidden)]
     _Extensible,
 }
@@ -45,6 +47,8 @@ pub struct I2c<I2C, PINS> {
     i2c: I2C,
     pins: PINS,
 }
+
+const FIFO_DEPTH: usize = 16;
 
 impl<PINS> I2c<I2C1, PINS> {
     pub fn i2c1<S>(i2c: I2C1, pins: PINS, speed: S, clocks: Clocks) -> Self
@@ -137,6 +141,9 @@ impl<PINS> Write for I2c<I2C1, PINS> {
     type Error = Error;
 
     fn write(&mut self, addr: u8, buffer: &[u8]) -> Result<(), Self::Error> {
+        // Set slave address
+        self.i2c.SA.modify(SA::ADDR.val(addr as _));
+
         // Clear FIFO
         self.i2c.CTRL.modify(CTRL::CLEAR::ClearFifo);
 
@@ -148,26 +155,36 @@ impl<PINS> Write for I2c<I2C1, PINS> {
         // Set data length
         self.i2c.DLEN.modify(DLEN::DLEN.val(buffer.len() as _));
 
-        // Set slave address
-        self.i2c.SA.modify(SA::ADDR.val(addr as _));
+        // Fill the FIFO
+        let mut cnt = 0;
+        for _ in 0..FIFO_DEPTH {
+            self.i2c.FIFO.modify(FIFO::DATA.val(buffer[cnt] as _));
+            cnt += 1;
+            if cnt >= buffer.len() {
+                break;
+            }
+        }
 
         // Start write
         self.i2c
             .CTRL
             .modify(CTRL::I2CEN::SET + CTRL::ST::SET + CTRL::RW::WriteTransfer);
 
-        for c in buffer {
-            self.send_byte(*c)?;
+        while !self.i2c.STATUS.is_set(STATUS::DONE) {
+            if cnt < buffer.len() {
+                for c in &buffer[cnt..] {
+                    self.send_byte(*c)?;
+                    cnt += 1;
+                }
+            }
         }
-
-        // TODO - check done?
-        //while !self.i2c.STATUS.is_set(STATUS::DONE) {
-        assert_eq!(self.i2c.STATUS.is_set(STATUS::DONE), true);
 
         let result = if self.i2c.STATUS.is_set(STATUS::ERR) {
             Err(Error::Nack)
         } else if self.i2c.STATUS.is_set(STATUS::CLKT) {
             Err(Error::ClockStretchTimeout)
+        } else if cnt != buffer.len() {
+            Err(Error::Truncated)
         } else {
             Ok(())
         };
