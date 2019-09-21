@@ -13,8 +13,9 @@
 
 use crate::hal::blocking::delay::{DelayMs, DelayUs};
 use crate::hal::timer::{CountDown, Periodic};
-use crate::time::Hertz;
+use crate::time::{Hertz, Instant};
 use bcm2837::sys_timer::*;
+use core::convert::TryFrom;
 use void::Void;
 
 const CLOCK_FREQ: Hertz = Hertz(1_000_000);
@@ -152,6 +153,11 @@ impl CountDown for Timer {
 }
 
 impl SysCounter {
+    pub fn get_time(&self) -> Instant {
+        // Microseconds to millisconds
+        Instant::from_millis(i64::try_from(self.read()).unwrap() / 1000)
+    }
+
     pub fn read(&self) -> u64 {
         read_sys_counter(&self.timer)
     }
